@@ -8,17 +8,16 @@ import DocumentHead from '../../components/Document/DocumentHead';
 import { setLoggedUser } from '../../redux/authSlice/authSlice';
 
 const Login = () => {
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { register, control, handleSubmit, formState: { errors, isValid } } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-  const isLogged = useSelector((state) => state.auth.isLogged);
 
   const onSubmit = (data) => {
     console.log(data)
-    dispatch(setLoggedUser(true))
+    // dispatch(setLoggedUser(true))
   };
 
   return (
@@ -89,6 +88,7 @@ const Login = () => {
                 </div>
                 <div className='pt-3'>
                   {loader ? <LoadBox title='Submitting' /> : <button
+                  disabled={!isValid}
                     type="submit"
                     className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                   >
