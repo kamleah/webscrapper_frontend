@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 
-const TransformTabs = ({ scraped_data, scraped_id }) => {
+const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) => {
     const [scrappedData, setScrappedData] = useState([]);
     const [loader, setLoader] = useState(false);
 
@@ -15,7 +15,7 @@ const TransformTabs = ({ scraped_data, scraped_id }) => {
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            selectedLanguages: [],
+            languages: ["english"],
         }
     });
 
@@ -23,7 +23,8 @@ const TransformTabs = ({ scraped_data, scraped_id }) => {
         { id: 'spanish', label: 'Spanish' },
         { id: 'japanese', label: 'Japanese' },
         { id: 'french', label: 'French' },
-        { id: 'german', label: 'German' }
+        { id: 'german', label: 'German' },
+        { id: 'english', label: 'English' },
     ];
 
     useEffect(() => {
@@ -38,9 +39,17 @@ const TransformTabs = ({ scraped_data, scraped_id }) => {
 
     const onSubmit = (data) => {
         setLoader(true);
-        
-        console.log("Selected Languages:", data.selectedLanguages);
-        setTimeout(() => setLoader(false), 2000);
+        data.content_id = scraped_id;
+        console.log("Selected Languages:", data.languages);
+        console.log(data);
+        axios.post(configurationEndPoints.translate_content, data).then((response) => {
+            console.log(response.data);
+            handleContentTransformed(response.data.data);
+            setLoader(false);
+        }).catch((error) => {
+            setLoader(false)
+            console.log(error);
+        });
     };
 
     return (
@@ -71,7 +80,7 @@ const TransformTabs = ({ scraped_data, scraped_id }) => {
                         {languages.map((language) => (
                             <div key={language.id} className="flex items-center space-x-3">
                                 <Controller
-                                    name="selectedLanguages"
+                                    name="languages"
                                     control={control}
                                     rules={{ required: true }}
                                     render={({ field }) => (
