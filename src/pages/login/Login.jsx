@@ -13,11 +13,10 @@ const Login = () => {
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-  const isLogged = useSelector((state) => state.auth.isLogged);
 
   const onSubmit = (data) => {
     console.log(data)
-    dispatch(setLoggedUser(true))
+    // dispatch(setLoggedUser(true))
   };
 
   return (
@@ -84,29 +83,17 @@ const Login = () => {
                       }
                     </span>
                   </div>
-                    {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
+                  {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
                 </div>
-                <div className='pt-3'>
-                  {loader ? <LoadBox title='Submitting' /> : <button
-                    type="submit"
-                    className="flex w-full justify-center font-tbPop rounded-md bg-gray-200 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
-                  >
-                    Sign in
-                  </button>}
-                </div>
-                {/* <div className="pt-3">
+
+                <div className="pt-3">
                   <button
                     type="submit"
-                    disabled={!isValid || loader} 
-                    className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${
-                      isValid
-                        ? 'bg-blue-500 hover:bg-sky-500'
-                        : 'bg-gray-300 cursor-not-allowed'
-                    }`}
-                  >
+                    disabled={!isValid || loader}
+                    className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${isValid ? 'bg-blue-500 hover:bg-sky-500' : 'bg-gray-300 cursor-not-allowed'}`} >
                     {loader ? 'Signing In...' : 'Sign in'}
                   </button>
-                </div> */}
+                </div>
               </div>
             </div>
           </form>
