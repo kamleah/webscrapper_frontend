@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import leftimage from '../../assets/images/leftImage.png'
 import { inputClass } from '../../utils/CustomClass';
 import DocumentHead from '../../components/Document/DocumentHead';
-import { setLoggedUser } from '../../redux/authSlice/authSlice';
+import { setLoggedUser, setLoggedUserDetails, setRole, setToken } from '../../redux/authSlice/authSlice';
+import axios from 'axios';
+import { authEndPoints } from '../../endPoints/AuthEndPoint';
+import LoadBox from '../../components/Loader/LoadBox';
 
 const Login = () => {
   const { register, control, handleSubmit, formState: { errors, isValid } } = useForm();
@@ -15,9 +18,24 @@ const Login = () => {
   const [loader, setLoader] = useState(false);
 
 
-  const onSubmit = (data) => {
-    console.log(data)
-    // dispatch(setLoggedUser(true))
+  const onSubmit = (payload) => {
+    try {
+      setLoader(true);
+      axios.post(`${authEndPoints.login}`, payload).then((response) => {
+        setLoader(false);
+        console.log(response.data.data);
+        
+        dispatch(setToken({ ...response.data.data, isLogged: true }));
+        dispatch(setRole({ role: response.data.data.user_role.name }));
+        dispatch(setLoggedUserDetails({...response.data.data}));
+      }).catch((error) => {
+        console.log(error);
+      })
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -87,11 +105,10 @@ const Login = () => {
                   </div>
                 </div>
                 <div className='pt-3'>
-                  {loader ? <LoadBox title='Submitting' /> : <button
-                  disabled={!isValid}
+                  {loader ? <LoadBox title="Logging In" /> : <button
+                    disabled={!isValid}
                     type="submit"
-                    className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
-                  >
+                    className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400">
                     Sign in
                   </button>}
                 </div>

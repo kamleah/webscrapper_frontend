@@ -15,6 +15,8 @@ import LogoutModal from '../../components/Modals/NavbarModals/LogoutModal';
 
 const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
     const user = useSelector((state) => state.user.logged_user);
+    const logDetails = useSelector((state) => state.auth);
+    const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
     
     const [open, setOpen] = useState(false)
     const [card, setCard] = useState(true)
@@ -53,13 +55,14 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                             {/* <img className="h-10 w-10 rounded-full object-cover" src={(user?.loggedUserDetails?.profile_image && user?.loggedUserDetails?.profile_image != "") ? user.loggedUserDetails.profile_image : userImg} alt="user" /> */}
                         </div>
                         <div className="ml-3 space-y-1 hidden lg:block w-full">
-                            <h4 className="text-base font-tb font-semibold whitespace-nowrap leading-none text-slate-800">
-                                {user?.first_name + " " + (user?.last_name?.length > 5 ? user?.first_name?.slice(0, 5) + "..." : user?.last_name)}
-                            </h4>
+                            {(loggedUserDetails?.first_name && loggedUserDetails?.last_name) && <h4 className="text-base font-tb font-semibold whitespace-nowrap leading-none text-slate-800">
+                                {loggedUserDetails?.first_name + " " + (loggedUserDetails?.last_name?.length > 5 ? loggedUserDetails?.first_name?.slice(0, 5) + "..." : loggedUserDetails?.last_name)}
+                            </h4>}
+                            {(!loggedUserDetails?.first_name && !loggedUserDetails?.last_name) && <h4 className="text-base font-tb font-semibold whitespace-nowrap leading-none text-slate-800">
+                                Hello {logDetails?.role}
+                            </h4>}
                             <h4 className="text-[12px] font-medium leading-none capitalize text-gray-500 pt-0.5 ">
-                                {/*<span className='lowercase'>{user?.loggedUserDetails?.role !== "SUPER_ADMIN"}</span>*/}
-                                {/* {user?.role?.split('_').join(' ')} */}
-                                {user?.is_superuser ? "Admin" : "Staff"}
+                                {logDetails?.role}
                             </h4>
                         </div>
                         <button className='px-3 hidden lg:block ' >
