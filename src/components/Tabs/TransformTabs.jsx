@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 
-const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) => {
+const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
     const [scrappedData, setScrappedData] = useState([]);
     const [loader, setLoader] = useState(false);
 
@@ -27,28 +27,41 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) =
         { id: 'english', label: 'English' },
     ];
 
-    useEffect(() => {
-        if (scraped_id) {
-            axios.get(`${configurationEndPoints.user_scrap_by_id}${scraped_id}/`)
+    const GetScrapDetails = (scrapId) => {
+        try {
+            setLoading(true);
+            axios.get(`${configurationEndPoints.user_scrap_by_id}${scrapId}/`)
                 .then((response) => {
                     setScrappedData(response.data.data.scraped_data.scrap_data);
+                    setLoading(false);
                 })
-                .catch((error) => console.log(error));
+                .catch((error) => {
+                    console.log(error);
+                    setLoading(false);
+                });
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (scraped_id) {
+            GetScrapDetails(scraped_id);
         }
     }, [scraped_id]);
 
     const onSubmit = (data) => {
         setLoader(true);
+        setLoading(true);
         data.content_id = scraped_id;
-        console.log("Selected Languages:", data.languages);
-        console.log(data);
         axios.post(configurationEndPoints.translate_content, data).then((response) => {
-            console.log(response.data);
             handleContentTransformed(response.data.data);
             setLoader(false);
+            setLoading(false);
         }).catch((error) => {
-            setLoader(false)
-            console.log(error);
+            setLoader(false);
+            setLoading(false);
         });
     };
 

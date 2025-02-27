@@ -11,6 +11,14 @@ const TransformResultTab = ({ transformedContent, scraped_id }) => {
 
     return (
         <div>
+            <div>
+                <div>
+
+                </div>
+                <div>
+                    
+                </div>
+            </div>
             {
                 transformedContent.map((content, index) => {
                     return (

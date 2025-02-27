@@ -8,10 +8,9 @@ import api from '../../constants/axiosInstence';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 import axios from 'axios';
 
-const Extract = ({ handleResponseRecieved }) => {
+const Extract = ({ handleResponseRecieved, setLoading }) => {
     const [loader, setLoader] = useState(false);
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
-
 
     const { control, handleSubmit, setValue, formState: { errors, isValid } } = useForm({
         defaultValues: {
@@ -26,6 +25,7 @@ const Extract = ({ handleResponseRecieved }) => {
 
     const onSubmit = (payload) => {
         setLoader(true);
+        setLoading(true);
         try {
             const crawlingPayload = {
                 user: loggedUserDetails?.id,
@@ -37,13 +37,16 @@ const Extract = ({ handleResponseRecieved }) => {
             axios.post(configurationEndPoints.user_scrap, crawlingPayload).then((response) => {
                 handleResponseRecieved(response.data.data);
                 setLoader(false);
+                setLoading(false);
             }).catch((error) => {
                 console.log(error);
                 setLoader(false);
+                setLoading(false);
             });
 
         } catch (error) {
-            setLoader(false)
+            setLoader(false);
+            setLoading(false);
             console.log(error);
         };
     };

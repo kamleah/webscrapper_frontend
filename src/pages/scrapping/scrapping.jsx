@@ -47,11 +47,11 @@ const Scrapping = () => {
                 </TabList>
 
                 <TabPanel>
-                    <Extract handleResponseRecieved={handleResponseRecieved} />
+                    <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} />
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrappedData?.scraped_id} handleContentTransformed={handleContentTransformed} />
+                    <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrappedData?.scraped_id} handleContentTransformed={handleContentTransformed} setLoading={setLoading} />
                 </TabPanel>
 
                 <TabPanel>
