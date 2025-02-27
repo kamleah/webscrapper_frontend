@@ -7,6 +7,7 @@ import axios from 'axios';
 import { formBtn1, inputClass, labelClass } from "../../utils/CustomClass";
 import Error from "../Errors/Error";
 import LoadBox from "../Loader/LoadBox";
+import { baseURL } from "../../constants";
 
 export default function CreateUserModal({ isOpen, onUserCreated, toggle, props = {} }) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -14,13 +15,11 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     const [eyeIcon, setEyeIcon] = useState(false);
     const [roles, setRoles] = useState([]);
     const [roleLoading, setRoleLoading] = useState(false);
-
-    // Fetch roles from API
     useEffect(() => {
         const fetchRoles = async () => {
             try {
                 setRoleLoading(true);
-                const response = await axios.get('http://192.168.0.181:8000/account/role/');
+                const response = await axios.get(`${baseURL}account/role/`);
                 if (response.data.status === "success") {
                     setRoles(response.data.data);
                 }
@@ -34,7 +33,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     }, []);
 
     const onSubmit = (data) => {
-        const newUser = { id: Date.now(), ...data }; // Unique ID generation
+        const newUser = { id: Date.now(), ...data }; 
         onUserCreated(newUser);
         reset();
         toggle();
