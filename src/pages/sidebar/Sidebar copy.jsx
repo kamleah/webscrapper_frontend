@@ -7,8 +7,6 @@ import { getCity, getDesignation, getMovableCategory, getTemperature } from '../
 import { useDispatch, useSelector } from 'react-redux';
 import { setCityNames, setDesignation, setMovableCategory, setTempRange } from '../../redux/Slices/masterSlice';
 import { RestrictedTitlesNonSuperAdmin, SidebarAdminApi, SidebarFlexiStoreApi, SidebarStoreMoveApi } from './SidebarApi';
-import logoImg from '../../assets/circle-logo.png';
-import logo from '../../assets/logoipsum-253.svg';
 
 const Sidebar = ({ children }) => {
     const user = useSelector(state => state?.user?.loggedUserDetails)
