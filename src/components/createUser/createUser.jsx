@@ -1,24 +1,48 @@
 import { CloseSquare } from "iconsax-react";
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useMemo, useState } from 'react';
+import { Eye, EyeSlash } from 'iconsax-react';
+import { Fragment, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formBtn1, formBtn2, inputClass, labelClass } from "../../utils/CustomClass";
+import axios from 'axios';
+import { formBtn1, inputClass, labelClass } from "../../utils/CustomClass";
 import Error from "../Errors/Error";
 import LoadBox from "../Loader/LoadBox";
 
-
-export default function CreateUserModal({ isOpen,onUserCreated, toggle, props = {} }) {
+export default function CreateUserModal({ isOpen, onUserCreated, toggle, props = {} }) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
-    const [loader, setLoader] = useState(false)
+    const [loader, setLoader] = useState(false);
+    const [eyeIcon, setEyeIcon] = useState(false);
+    const [roles, setRoles] = useState([]);
+    const [roleLoading, setRoleLoading] = useState(false);
+
+    // Fetch roles from API
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                setRoleLoading(true);
+                const response = await axios.get('http://192.168.0.181:8000/account/role/');
+                if (response.data.status === "success") {
+                    setRoles(response.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+            } finally {
+                setRoleLoading(false);
+            }
+        };
+        fetchRoles();
+    }, []);
+
     const onSubmit = (data) => {
-        const newUser = { id: data.length + 1, ...data };
+        const newUser = { id: Date.now(), ...data }; // Unique ID generation
         onUserCreated(newUser);
-        reset(); 
+        reset();
         toggle();
     };
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-[100]" onClose={() => toggle}>
+            <Dialog as="div" className="relative z-[100]" onClose={toggle}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -30,7 +54,7 @@ export default function CreateUserModal({ isOpen,onUserCreated, toggle, props = 
                 >
                     <div className="fixed inset-0 bg-black bg-opacity-25" />
                 </Transition.Child>
-                <div className="fixed inset-0 ">
+                <div className="fixed inset-0">
                     <div className="flex min-h-full items-center justify-center p-4 text-center">
                         <Transition.Child
                             as={Fragment}
@@ -41,79 +65,123 @@ export default function CreateUserModal({ isOpen,onUserCreated, toggle, props = 
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-lg bg-white  text-left align-middle shadow-xl transition-all">
-
-                                <Dialog.Title
-                                    as="div"
-                                    className="flex items-center justify-between bg-blue-500 text-white p-4"
-                                >
+                            <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
+                                <Dialog.Title as="div" className="flex items-center justify-between bg-blue-500 text-white p-4">
                                     <h3 className="text-lg font-medium">Create User</h3>
-                                    <CloseSquare
-                                        size={24}
-                                        color="white"
-                                        className="cursor-pointer"
-                                        onClick={toggle}
-                                    />
+                                    <CloseSquare size={24} color="white" className="cursor-pointer" onClick={toggle} />
                                 </Dialog.Title>
-                                <div className=" bg-gray-200/70 ">
-                                    {/* React Hook Form */}
+                                <div className="bg-gray-200/70">
                                     <form onSubmit={handleSubmit(onSubmit)}>
-                                        <div className="py-4 overflow-y-scroll scrollbars " >
+                                        <div className="py-4 overflow-y-scroll scrollbars">
                                             <div className="py-4 mx-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-3 customBox">
-                                                <div className="">
-                                                    <label className={labelClass}>
-                                                        Email Address*
-                                                    </label>
+                                                <div>
+                                                    <label className={labelClass}>Email Address*</label>
                                                     <input
                                                         type="email"
                                                         disabled={props?.button === 'edit'}
-                                                        placeholder='Email Address'
+                                                        placeholder="Email Address"
                                                         className={`${inputClass} ${props?.button === 'edit' ? 'text-gray-300' : ''}`}
                                                         {...register('email', { required: true })}
                                                     />
-                                                    {errors.email && <Error title='Email is required*' />}
+                                                    {errors.email && <Error title="Email is required*" />}
                                                 </div>
-                                                <div className="">
-                                                    <label className={labelClass}>
-                                                        Name*
-                                                    </label>
+                                                <div>
+                                                    <label className={labelClass}>Full Name*</label>
                                                     <input
                                                         type="text"
-                                                        placeholder='Name'
+                                                        placeholder="Full Name"
                                                         className={inputClass}
-                                                        {...register('name', { required: true })}
+                                                        {...register('fullName', { required: true })}
                                                     />
-                                                    {errors.name && <Error title='Name is required*' />}
+                                                    {errors.fullName && <Error title="Full Name is required*" />}
                                                 </div>
-                                            
-                                                <div className="">
-                                                    <label className={labelClass}>
-                                                        Phone Number*
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        placeholder='Phone Number'
-                                                        className={inputClass}
-                                                        {...register('phoneNumber', { required: true })}
-                                                    />
-                                                    {errors.phoneNumber && <Error title='Phone Number is required*' />}
-                                                </div>
-                                                <div className="">
-                                                    <label className={labelClass}>
-                                                        Address*
-                                                    </label>
+                                                <div>
+                                                    <label className={labelClass}>Username*</label>
                                                     <input
                                                         type="text"
-                                                        placeholder='Address'
+                                                        placeholder="Username"
                                                         className={inputClass}
-                                                        {...register('address', { required: true })}
+                                                        {...register('username', { required: true })}
                                                     />
-                                                    {errors.address && <Error title='Address is required*' />}
+                                                    {errors.username && <Error title="Username is required*" />}
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="selectRole" className={`${labelClass}`}>
+                                                        Role
+                                                    </label>
+                                                    <div className="mt-1">
+                                                        <select
+                                                            id="selectRole"
+                                                            name="selectRole"
+                                                            className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
+                                                            {...register('selectRole', { required: 'Please select a role' })}
+                                                            disabled={roleLoading}
+                                                        >
+                                                            <option value="" disabled>
+                                                                {roleLoading ? "Loading Roles..." : "-- Select Role --"}
+                                                            </option>
+                                                            {roles.map((role) => (
+                                                                <option key={role.id} value={role.name}>
+                                                                    {role.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        {errors.selectRole && <p className="text-red-500 text-xs">{errors.selectRole.message}</p>}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="selectOption" className={`${labelClass}`}>
+                                                        Select Option
+                                                    </label>
+                                                    <div className="mt-1">
+                                                        <select
+                                                            id="selectOption"
+                                                            name="selectOption"
+                                                            className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
+                                                            {...register('selectOption', { required: 'Please select an option' })}
+                                                        >
+                                                            <option value="" disabled>
+                                                                -- Select an Option --
+                                                            </option>
+                                                            <option value="single">Single</option>
+                                                            <option value="batch">Batch</option>
+                                                        </select>
+                                                        {errors.selectOption && <p className="text-red-500 text-xs">{errors.selectOption.message}</p>}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className={labelClass}>Password*</label>
+                                                    <div className="mt-1 relative flex items-center">
+                                                        <input
+                                                            id="password"
+                                                            name="password"
+                                                            placeholder="Password"
+                                                            type={!eyeIcon ? "password" : "text"}
+                                                            className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
+                                                            {...register('password', { required: true })}
+                                                        />
+                                                        <span className="absolute right-2 z-10 bg-neutral-100" onClick={() => setEyeIcon(!eyeIcon)}>
+                                                            {eyeIcon ? (
+                                                                <Eye size={24} className="text-gray-400 cursor-pointer" />
+                                                            ) : (
+                                                                <EyeSlash size={24} className="text-gray-400 cursor-pointer" />
+                                                            )}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <footer className="py-2 flex bg-white justify-end px-4 space-x-3">
-                                            {loader ? <LoadBox className="relative block w-auto px-5 transition-colors font-tb tracking-wide duration-200 py-2.5 overflow-hidden text-base font-semibold text-center text-white rounded-lg bg-orange-500 hover:bg-orange-500 capitalize" title='Submitting' /> : <button type='submit' className={formBtn1}>Submit</button>}
+                                            {loader ? (
+                                                <LoadBox
+                                                    className="relative block w-auto px-5 transition-colors font-tb tracking-wide duration-200 py-2.5 overflow-hidden text-base font-semibold text-center text-white rounded-lg bg-orange-500 hover:bg-orange-500 capitalize"
+                                                    title="Submitting"
+                                                />
+                                            ) : (
+                                                <button type="submit" className={formBtn1}>
+                                                    Submit
+                                                </button>
+                                            )}
                                         </footer>
                                     </form>
                                 </div>
@@ -122,6 +190,6 @@ export default function CreateUserModal({ isOpen,onUserCreated, toggle, props = 
                     </div>
                 </div>
             </Dialog>
-        </Transition >
+        </Transition>
     );
 }
