@@ -2,11 +2,15 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) => {
+const TransformTabs = ({ scraped_data, scraped_id }) => {
     const [scrappedData, setScrappedData] = useState([]);
     const [loader, setLoader] = useState(false);
-
+    const [accordian, setAccordian] = useState(null);
+    const toggleAccordion = (index) => {
+        setAccordian(accordian === index ? null : index);
+    };
     const {
         control,
         handleSubmit,
@@ -15,7 +19,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) =
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            languages: ["english"],
+            selectedLanguages: [],
         }
     });
 
@@ -23,8 +27,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) =
         { id: 'spanish', label: 'Spanish' },
         { id: 'japanese', label: 'Japanese' },
         { id: 'french', label: 'French' },
-        { id: 'german', label: 'German' },
-        { id: 'english', label: 'English' },
+        { id: 'german', label: 'German' }
     ];
 
     useEffect(() => {
@@ -39,39 +42,53 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) =
 
     const onSubmit = (data) => {
         setLoader(true);
-        data.content_id = scraped_id;
-        console.log("Selected Languages:", data.languages);
-        console.log(data);
-        axios.post(configurationEndPoints.translate_content, data).then((response) => {
-            console.log(response.data);
-            handleContentTransformed(response.data.data);
-            setLoader(false);
-        }).catch((error) => {
-            setLoader(false)
-            console.log(error);
-        });
+
+        console.log("Selected Languages:", data.selectedLanguages);
+        setTimeout(() => setLoader(false), 2000);
     };
 
     return (
         <div>
-            <div>
+            <div className='my-5'>
                 {scrappedData.map((data, index) => (
-                    <div key={index} className="p-2">
-                        <h3 className="text-blue-600 mb-4 text-sm font-bold">
-                            {index + 1}. {data.name} - {data.price}
-                        </h3>
-                        <div className="bg-white p-6 rounded-lg shadow-lg">
-                            <h5 className="text-blue-600 mb-4 text-sm font-bold">
-                                Description
-                            </h5>
-                            <p className="text-gray-700">{data.description}</p>
-                            <a href={data.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline mt-2 block">
+                    <div
+                        key={index}
+                        className="border border-gray-200 rounded-lg mb-4 shadow-sm overflow-hidden"
+                    >
+                        <div
+                            onClick={() => toggleAccordion(index)}
+                            className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
+                        >
+                            <h3 className="text-blue-600 text-sm font-bold">
+                                {index + 1}. {data.name} - {data.price}
+                            </h3>
+                            {accordian === index ? (
+                                <ChevronUp className="text-blue-600" />
+                            ) : (
+                                <ChevronDown className="text-blue-600" />
+                            )}
+                        </div>
+                        <div
+                            className={`transition-all duration-300 ${accordian === index
+                                ? "max-h-[300px] p-4 bg-white overflow-y-auto"
+                                : "max-h-0 overflow-hidden"
+                                }`}
+                        >
+                            <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5>
+                            <p className="text-sm text-gray-700">{data.description}</p>
+                            <a
+                                href={data.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 underline mt-2 block"
+                            >
                                 View Product
                             </a>
                         </div>
                     </div>
                 ))}
             </div>
+
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
@@ -80,7 +97,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed }) =
                         {languages.map((language) => (
                             <div key={language.id} className="flex items-center space-x-3">
                                 <Controller
-                                    name="languages"
+                                    name="selectedLanguages"
                                     control={control}
                                     rules={{ required: true }}
                                     render={({ field }) => (
