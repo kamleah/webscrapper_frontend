@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Markdown from 'react-markdown';
 
-const TransformResultTab = ({ transformedContent }) => {
+const TransformResultTab = ({ transformedContent, scraped_id }) => {
+
+    useEffect(() => {
+        if (scraped_id) {
+            console.log("scraped_id", scraped_id);
+        };
+    }, [scraped_id]);
+
     return (
         <div>
-            {/* {JSON.stringify(transformedContent)} */}
             {
                 transformedContent.map((content, index) => {
                     return (
@@ -20,9 +26,8 @@ const TransformResultTab = ({ transformedContent }) => {
                     )
                 })
             }
-
         </div>
     )
 }
 
-export default TransformResultTab
+export default TransformResultTab;
