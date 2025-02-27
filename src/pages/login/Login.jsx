@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import leftimage from '../../assets/images/leftImage.png'
 import { inputClass } from '../../utils/CustomClass';
 import DocumentHead from '../../components/Document/DocumentHead';
-import { setLoggedUser } from '../../redux/authSlice/authSlice';
+import { setLoggedUser, setLoggedUserDetails, setRole, setToken } from '../../redux/authSlice/authSlice';
+import axios from 'axios';
+import { authEndPoints } from '../../endPoints/AuthEndPoint';
+import LoadBox from '../../components/Loader/LoadBox';
+import { toast } from 'react-toastify';
+
 const Login = () => {
   const { register, control, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const [showPassword, setShowPassword] = useState(false);
@@ -14,9 +19,25 @@ const Login = () => {
   const [loader, setLoader] = useState(false);
 
 
-  const onSubmit = (data) => {
-    console.log(data)
-    // dispatch(setLoggedUser(true))
+  const onSubmit = (payload) => {
+    try {
+      setLoader(true);
+      axios.post(`${authEndPoints.login}`, payload).then((response) => {
+        setLoader(false);
+        console.log(response.data.data);
+        
+        dispatch(setToken({ ...response.data.data, isLogged: true }));
+        dispatch(setRole({ role: response.data.data.user_role.name }));
+        dispatch(setLoggedUserDetails({...response.data.data}));
+      }).catch((error) => {
+        toast.error('Please Enter Valid Credentails')
+        console.log(error);
+      })
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -94,7 +115,7 @@ const Login = () => {
                     {loader ? 'Signing In...' : 'Sign in'}
                   </button>
                 </div>
-              </div>
+            </div>
             </div>
           </form>
         </div>
