@@ -1,0 +1,76 @@
+[
+    {
+        "id": 1,
+        "last_login": null,
+        "is_superuser": true,
+        "username": "kamlesh",
+        "first_name": "",
+        "last_name": "",
+        "email": "kamleshgupta@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-02-25T10:40:18.325199Z",
+        "user_role": null,
+        "user_created_by": null
+    },
+    {
+        "id": 2,
+        "last_login": null,
+        "is_superuser": false,
+        "username": "222c1k1sqt",
+        "first_name": "Pooja",
+        "last_name": "Gupta",
+        "email": "user@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-02-25T10:44:38.617941Z",
+        "user_role": null,
+        "user_created_by": null
+    },
+    {
+        "id": 3,
+        "last_login": null,
+        "is_superuser": false,
+        "username": "r5wef41wgm",
+        "first_name": "Kammo",
+        "last_name": "Gupta",
+        "email": "kammo@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-02-25T10:47:44.192652Z",
+        "user_role": {
+            "id": 1,
+            "name": "SuperAdmin"
+        },
+        "user_created_by": {
+            "id": 2,
+            "username": "222c1k1sqt",
+            "email": "user@example.com",
+            "first_name": "Pooja",
+            "last_name": "Gupta"
+        }
+    },
+    {
+        "id": 4,
+        "last_login": null,
+        "is_superuser": false,
+        "username": "uy2fw2j8c2",
+        "first_name": "Kammo",
+        "last_name": "Gupta",
+        "email": "kammo1@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-02-25T10:48:51.999862Z",
+        "user_role": {
+            "id": 2,
+            "name": "Admin"
+        },
+        "user_created_by": {
+            "id": 2,
+            "username": "222c1k1sqt",
+            "email": "user@example.com",
+            "first_name": "Pooja",
+            "last_name": "Gupta"
+        }
+    }
+]

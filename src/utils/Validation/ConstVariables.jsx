@@ -1,0 +1,1 @@
+export const maxProductThumbnailImageSize = 10;

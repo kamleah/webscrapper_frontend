@@ -1,0 +1,223 @@
+import React from 'react'
+import Input from '../../components/Input/Input'
+import { requiredField } from '../../utils/Validation/FormValidationRule'
+import { Controller, useForm } from 'react-hook-form'
+import AdvancedSearchableDropdown from '../../components/DropDown/AdvancedSearchableDropdown'
+import ReactQuill from 'react-quill'
+import "react-quill/dist/quill.snow.css";
+import Textarea from '../../components/Input/Textarea'
+
+const AddProducts = () => {
+  const dsd = {
+    "price": 2000,
+    "discount": 100,
+    "name": "Product",
+    "description": "<h2>About this item</h2>\r\n\r\n<h3>Package Contains:</h3>\r\n<ul>\r\n    <li>1x Panda Lamp</li>\r\n    <li>USB Cable</li>\r\n    <li>User Manual</li>\r\n</ul>\r\n\r\n<h3>Easy to Use:</h3>\r\n<p>You can easily squeeze or tap the lamp surface to change different lighting modes and turn the panda lamp on/off. Choose from three lighting modes: warm white mode, color-changing mode, and static color mode.</p>\r\n\r\n<h3>Real All-Night Companion Night Light for Kids:</h3>\r\n<p>This panda nightlight is designed to stay on all night without turning off automatically, providing a consistent, soothing glow. It helps create a relaxed bedtime experience, protecting your kids from darkness and aiding them in falling asleep.</p>\r\n\r\n<h3>Silicone Night Lights:</h3>\r\n<p>Made from 100% baby-safe BPA-free material, ensuring it is fun and friendly for kids. The durable design allows kids to play with it without worrying about breaking it. Perfect for placing near a child's bed as a comforting night companion.</p>\r\n\r\n<h3>Cute Kids Night Light Decor:</h3>\r\n<p>Suitable for children of all ages, offering a gentle and calming glow throughout the night. The soft lighting does not disturb the child's sleep. Cute Mr. Panda will be a comforting presence, driving away darkness and keeping children company at bedtime.</p>",
+    "price_on_request": false,
+    "search_keywords": null,
+    "coa_purity": "sdkvvm ds",
+    "warranty": "2 months",
+    "thumbnail_image": "https://siverce.s3.amazonaws.com/siverce-product/andrew-seaman-14HyRO75p24-unsplash.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AEQHYIORKEGXWHS%2F20240704%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240704T021842Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=437953bf428871f5e7ee682e227633caf704f398844de5cf1fe4510aba62ff55",
+    "brand": 6,
+    "category": 1,
+    "lead_time_chemical": 3,
+    "pack_size": 2,
+    "grade": 2
+  }
+  const { control, handleSubmit, setValue, formState: { errors } } = useForm();
+  const onSubmit = (data) => {
+    console.log('data', data);
+  };
+
+  return (
+    <div>
+      <div>
+        <div><h4>Add Product</h4></div>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className='border-2 border-red-600 flex flex-row'>
+          <div className='border-2 border-orange-600 w-3/4'>
+            <Input
+              label='Product Name'
+              placeholder="Enter Product Name"
+              control={control}
+              errorsMsg={errors?.name?.message}
+              name='name'
+              rules={requiredField('Pack Size')}
+            />
+            <div className='flex flex-row gap-2'>
+              <Input
+                label='Price'
+                placeholder="Enter Product Price"
+                control={control}
+                errorsMsg={errors?.price?.message}
+                name='price'
+                rules={requiredField('Product Price')}
+                inputType='number'
+              />
+              <Input
+                label='Discount Price'
+                placeholder="Enter Product Discount Price"
+                control={control}
+                errorsMsg={errors?.discount?.message}
+                name='discount'
+                rules={requiredField('Discount Price')}
+                inputType='number'
+              />
+            </div>
+            <div className='flex flex-row gap-2'>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Warranty'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Brand'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+            </div>
+            <div className='flex flex-row gap-2'>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Category'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Lead Time Chemical'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+            </div>
+            <div className='flex flex-row gap-2'>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Pack Size'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+              <div className='w-full mt-1'>
+                <Controller
+                  control={control}
+                  name={'packSizeUnit'}
+                  rules={requiredField('Unit Size')}
+                  render={({ field: { onChange, onBlur, onFocus, value: fieldValue, ref } }) => (
+                    <AdvancedSearchableDropdown
+                      label='Select Grade'
+                      options={[]}
+                      placeholder={"Select Pack Size Unit"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors?.packSizeUnit?.message && <span className="text-red-500">{errors?.packSizeUnit?.message}</span>}
+              </div>
+            </div>
+
+            <div>
+              <Textarea
+                label='Search Keywords'
+                placeholder="Enter Product Discount Price"
+                control={control}
+                errorsMsg={errors?.search_keywords?.message}
+                name='search_keywords'
+                rules={requiredField('Search Keywords')}
+                inputType='number'
+              />
+              <Controller
+                name="description"
+                control={control}
+                rules={{
+                  required: "Description is required",
+                  validate: (value) => value.trim() !== "" || "No spaces allowed",
+                }}
+                render={({ field }) => (
+                  <ReactQuill
+                    className="h-64"
+                    // style={{ height: "30vh"  }}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className='border-2 border-yellow-600 w-2/4 px-4'>
+            <div className='flex justify-between w-full'>
+              <div >
+                <span className='text-gray-600 text-sm' >Price on request</span>
+              </div>
+              <div>
+                <Input
+                  placeholder="Enter Product Price"
+                  control={control}
+                  errorsMsg={errors?.price_on_request?.message}
+                  name='price_on_request'
+                  rules={requiredField('Price on request')}
+                  inputType='checkbox'
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default AddProducts
