@@ -14,11 +14,13 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     const [eyeIcon, setEyeIcon] = useState(false);
     const [roles, setRoles] = useState([]);
     const [roleLoading, setRoleLoading] = useState(false);
+
+    // Fetch roles from API
     useEffect(() => {
         const fetchRoles = async () => {
             try {
                 setRoleLoading(true);
-                const response = await axios.get(`${baseURL}account/role/`);
+                const response = await axios.get('http://192.168.0.181:8000/account/role/');
                 if (response.data.status === "success") {
                     setRoles(response.data.data);
                 }
@@ -32,7 +34,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     }, []);
 
     const onSubmit = (data) => {
-        const newUser = { id: Date.now(), ...data }; 
+        const newUser = { id: Date.now(), ...data }; // Unique ID generation
         onUserCreated(newUser);
         reset();
         toggle();
