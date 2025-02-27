@@ -6,9 +6,8 @@ import leftimage from '../../assets/images/leftImage.png'
 import { inputClass } from '../../utils/CustomClass';
 import DocumentHead from '../../components/Document/DocumentHead';
 import { setLoggedUser } from '../../redux/authSlice/authSlice';
-
 const Login = () => {
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { register, control, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const [eyeIcon, setEyeIcon] = useState(false)
@@ -84,17 +83,30 @@ const Login = () => {
                           <EyeSlash size={24} className='text-gray-400 cursor-pointer' />
                       }
                     </span>
-                    {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
                   </div>
+                    {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
                 </div>
                 <div className='pt-3'>
                   {loader ? <LoadBox title='Submitting' /> : <button
                     type="submit"
-                    className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                    className="flex w-full justify-center font-tbPop rounded-md bg-gray-200 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                   >
                     Sign in
                   </button>}
                 </div>
+                {/* <div className="pt-3">
+                  <button
+                    type="submit"
+                    disabled={!isValid || loader} 
+                    className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${
+                      isValid
+                        ? 'bg-blue-500 hover:bg-sky-500'
+                        : 'bg-gray-300 cursor-not-allowed'
+                    }`}
+                  >
+                    {loader ? 'Signing In...' : 'Sign in'}
+                  </button>
+                </div> */}
               </div>
             </div>
           </form>
@@ -103,5 +115,4 @@ const Login = () => {
     </>
   )
 }
-
 export default Login
