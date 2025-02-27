@@ -11,20 +11,10 @@ const rootReducer = combineReducers({
   auth: authSlice,
   user: userSlice,
   history: historySlice,
-  // brand: BrandSlice,
-  // grade: GradeSlice,
-  // unit: UnitSlice,
-  // packsize: PackSizeSlice,
-  // leadtime: LeadTimeSlice,
-  // category: CategorySlice,
-  // modalslice: ModalSlice,
-  // product:ProductSlice,
-  // carousel:carouselSlice,
-  // globalconfigurationsslice: GlobalConfigurationsSlice
 });
 
 const persistConfig = {
-  key: 'SiVerceWeb',
+  key: 'ScrappperWeb',
   version: 1,
   storage,
   stateReconciler: autoMergeLevel2,

@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import SiVerceImage from '../../components/Image/SiVerceImage';
-import loginLogo from '../../assets/illustrations/login_illustration.jpg'
-import Input from '../../components/Input/Input';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { emailValidation, requiredField } from '../../utils/Validation/FormValidationRule';
-import IconButton from '../../components/Button/IconButton';
-import IconInput from '../../components/Input/IconInput';
 import { Eye, EyeSlash } from 'iconsax-react';
-import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
-// import { adminLogin } from '../../redux/thunk/AuthThunk';
 import leftimage from '../../assets/images/leftImage.png'
 import { inputClass } from '../../utils/CustomClass';
 import DocumentHead from '../../components/Document/DocumentHead';
-import { toast } from 'react-toastify';
 import { setLoggedUser } from '../../redux/authSlice/authSlice';
 
 const Login = () => {
@@ -23,25 +14,13 @@ const Login = () => {
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-  // const { error, isLogged } = useSelector((state) => state.auth);
    const isLogged = useSelector((state) => state.auth.isLogged);
 
   const onSubmit = (data) => {
     console.log(data)
     dispatch(setLoggedUser(true))
-    // dispatch(adminLogin(data));
   };
 
-  console.log("isLogged--->", isLogged);
-  // console.log("error--->", error);
-
-  // useEffect(() => {
-  //   if(error){
-  //     toast(error)
-  //   }
-  // }, [error])
-  
-  
   return (
     <>
       <DocumentHead title='Login' />
