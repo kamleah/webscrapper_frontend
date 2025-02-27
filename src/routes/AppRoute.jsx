@@ -7,16 +7,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import Register from '../pages/register/register';
 
 const AppRoute = () => {
-    // const isLogged = true;
-    const isLogged = useSelector((state) => state.auth.isLogged);
-    console.log(isLogged,"approut")
+    const isLogged = true;
+    // const isLogged = useSelector((state) => state.auth.isLogged);
     return (
         <>
             {
                 isLogged ?
                     <AuthenticatedRoute />
                     :
-                    // <Login />
                     <Register/>
             }
             <ToastContainer position="top-right"

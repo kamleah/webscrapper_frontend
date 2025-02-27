@@ -14,7 +14,7 @@ const Login = () => {
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-   const isLogged = useSelector((state) => state.auth.isLogged);
+  const isLogged = useSelector((state) => state.auth.isLogged);
 
   const onSubmit = (data) => {
     console.log(data)
