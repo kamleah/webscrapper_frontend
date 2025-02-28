@@ -2,6 +2,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
+import EditCreateButton from '../Button/EditCreateButton';
 
 const TransformResultTab = ({ transformedContent }) => {
     const [accordionIndex, setAccordionIndex] = useState(null);
@@ -123,10 +124,14 @@ const TransformResultTab = ({ transformedContent }) => {
 
     return (
         <div className="my-4 space-y-4">
-            {/* <button onClick={extractDynamicData}>Json</button> */}
-            <button onClick={()=>parseMarkdownToJson(testingData)}>parseMarkdownToJson</button>
-            <div className='transformationcontent' >
-                {transformedContent?.map((content, index) => (
+            <div className="flex justify-end">
+                <EditCreateButton title="Download" buttonType="create" />
+            </div>
+            {transformedContent.map((content, index) => (
+                <div
+                    key={index}
+                    className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                >
                     <div
                         key={index}
                         className="border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-1"
@@ -160,8 +165,18 @@ const TransformResultTab = ({ transformedContent }) => {
                             </p>
                         </div>
                     </div>
-                ))}
-            </div>
+                    <div
+                        className={`transition-all duration-300 ease-in-out ${accordionIndex === index
+                                ? "max-h-[300px] p-4 bg-white overflow-y-auto"
+                                : "max-h-0 overflow-hidden"
+                            }`}
+                    >
+                        <p className="text-sm text-gray-700">
+                            <Markdown>{content.content}</Markdown>
+                        </p>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };

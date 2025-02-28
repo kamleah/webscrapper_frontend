@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from "react";
 import EditCreateButton from "../../components/Button/EditCreateButton";
-import { Eye, Trash } from "iconsax-react";
+import { ArrowDown, Eye, Trash } from "iconsax-react";
 import SectionHeader from "../../components/Card/SectionHeader";
 import Table from "../../components/Table/Table";
 import ViewDetailsModal from "../../components/Modals/viewUserModal/viewUserModal";
 import { setHistory } from "../../redux/historySlice/historySlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import moment from "moment";
+import { ArrowDownToLine } from "lucide-react";
+import ViewHistoryDetails from "../../components/Modals/viewHistoryDetails/viewHistoryDetails";
 
 const History = () => {
     const dispatch = useDispatch();
     const history = useSelector((state) => state.history.history);
-    const historyFields = [
-        { label: "Email", key: "user.email" },
-        { label: "First Name", key: "user.first_name" },
-        { label: "Last Name", key: "user.last_name" },
-        { label: "Role", key: "user.user_role.name" },
-        { label: "Urls" , key:"urls"},
-        { label: "search Keywords" , key:"search_keywords"},
-    ];
-
     const [isViewHistoryModalOpen, setViewHistoryModalOpen] = useState(false);
     const [selectedHistory, setSelectedHistory] = useState(null);
     useEffect(() => {
@@ -54,6 +48,13 @@ const History = () => {
                 <Eye size="20" className="text-blue-500" />
             </button>
             <button
+                // onClick={}
+                id={row.id}
+                className="bg-yellow-100 px-1.5 py-2 rounded-sm"
+            >
+                <ArrowDownToLine size="20" className="text-yellow-500" />
+            </button>
+            <button
                 onClick={() => handleDelete(row.id)}
                 id={row.id}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
@@ -69,23 +70,6 @@ const History = () => {
     };
    
     const columns = [
-        { field: "first_name", header: "First Name", body: (row) => <h6>{row?.user?.first_name || "--"}</h6>, style: { width: "20%" } },
-        { field: "last_name", header: "Last Name", body: (row) => <h6>{row?.user?.last_name || "--"}</h6>, style: { width: "20%" } },
-        { field: "email", header: "Email", body: (row) => <h6>{row?.user?.email || "--"}</h6>, style: { width: "20%" } },
-        { 
-            field: "search_keywords", 
-            header: "Search Keywords", 
-            body: (row) => (
-                <h6>
-                    {row?.search_keywords && row.search_keywords.length > 0 
-                        ? row.search_keywords[0].length > 30 
-                        ? `${row.search_keywords[0].substring(0, 30)}...` 
-                        : row.search_keywords[0] 
-                        : "--"}
-                </h6>
-            ), 
-            style: { width: "20%" } 
-        },
         { 
             field: "urls", 
             header: "Urls", 
@@ -100,6 +84,18 @@ const History = () => {
             ), 
             style: { width: "20%" } 
         },
+        { 
+            field: "userInfo", 
+            header: "User Info", 
+            body: (row) => (
+                <div>
+                    <h6>{`${row?.user?.first_name || "--"} ${row?.user?.last_name || "--"}`}</h6>
+                    <h6>{row?.user?.email || "--"}</h6>
+                </div>
+            ), 
+            style: { width: "40%" } 
+        },
+         { field: "date", header: "Date", body: (row) => <h6>{(moment(row?.created_at).format('YYYY-MM-DD')) || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
     return (
@@ -108,14 +104,10 @@ const History = () => {
                 <SectionHeader title="History" />
             </div>
             <Table data={history} columns={columns} />
-
-            <ViewDetailsModal
-                isOpen={isViewHistoryModalOpen}
+            <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
                 title="History Details"
-                fields={historyFields}
-                data={selectedHistory}
-            />
+                data={selectedHistory}/>
 
         </div>
     );

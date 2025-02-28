@@ -60,6 +60,7 @@ const Scrapping = () => {
             </Tabs>
 
             {loading && <PageLoader />}
+            
         </div>
     );
 };
