@@ -2,6 +2,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
+import EditCreateButton from '../Button/EditCreateButton';
 
 const TransformResultTab = ({ transformedContent }) => {
     const [accordionIndex, setAccordionIndex] = useState(null);
@@ -12,6 +13,9 @@ const TransformResultTab = ({ transformedContent }) => {
 
     return (
         <div className="my-4 space-y-4">
+            <div className="flex justify-end">
+                <EditCreateButton title="Download" buttonType="create" />
+            </div>
             {transformedContent.map((content, index) => (
                 <div
                     key={index}
@@ -36,11 +40,10 @@ const TransformResultTab = ({ transformedContent }) => {
                         )}
                     </div>
                     <div
-                        className={`transition-all duration-300 ease-in-out ${
-                            accordionIndex === index
+                        className={`transition-all duration-300 ease-in-out ${accordionIndex === index
                                 ? "max-h-[300px] p-4 bg-white overflow-y-auto"
                                 : "max-h-0 overflow-hidden"
-                        }`}
+                            }`}
                     >
                         <p className="text-sm text-gray-700">
                             <Markdown>{content.content}</Markdown>

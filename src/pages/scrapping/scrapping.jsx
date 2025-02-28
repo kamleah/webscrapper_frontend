@@ -126,6 +126,7 @@ const Scrapping = () => {
                     <TransformResultTab transformedContent={transformedContents} />
                 </TabPanel>
             </Tabs>
+            
         </div>
     );
 };

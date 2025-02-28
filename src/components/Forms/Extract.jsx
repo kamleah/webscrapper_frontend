@@ -57,7 +57,7 @@ const Extract = ({ handleResponseRecieved }) => {
                     {fields.map((field, index) => (
                         <div key={field.id} className="flex flex-1">
                             {/* Product Name Input */}
-                            <div className="w-full m-1">
+                            {/* <div className="w-full m-1">
                                 <Controller
                                     control={control}
                                     name={`products.${index}.product_name`}
@@ -75,7 +75,7 @@ const Extract = ({ handleResponseRecieved }) => {
                                         {errors.products[index].product_name.message}
                                     </p>
                                 )}
-                            </div>
+                            </div> */}
 
                             {/* Product URL Input */}
                             <div className="w-full m-1">
