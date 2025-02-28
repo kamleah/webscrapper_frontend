@@ -37,11 +37,15 @@ const Scrapping = () => {
 
     const handleTebSelected = (index) => {
         try {
-            setSelectedTab(index)
+            if(index > selectedTab){
+                setSelectedTab(selectedTab);
+            }else{
+                setSelectedTab(index);
+            }
         } catch (error) {
             console.log(error);
         };
-    }
+    };
 
     return (
         <div className="p-8 bg-white sm:m-5 rounded-xl">
