@@ -3,8 +3,11 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
 import EditCreateButton from '../Button/EditCreateButton';
+import { useDispatch } from 'react-redux';
+import { resetProcess } from '../../redux/historySlice/historySlice';
 
-const TransformResultTab = ({ transformedContent }) => {
+const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
+    const dispatch = useDispatch();
     const [accordionIndex, setAccordionIndex] = useState(null);
 
     const toggleAccordion = (index) => {
@@ -39,23 +42,22 @@ const TransformResultTab = ({ transformedContent }) => {
 
 
         // return JSON.stringify(data, null, 4);
-    }
-
+    };
 
     const parseMarkdownToJson = (markdown) => {
         // const data = {};
         // const lines = markdown.split("\n");
-        const lines =markdown
+        const lines = markdown
         console.log("lines--->", lines);
-        
+
         let currentKey = null; // Track the active key
         let listMode = false;  // Track if we are in a list
-    
+
         lines.forEach(line => {
 
             // Match "**Key:** Value" pattern (bolded headings)
             const keyValueMatch = line.match(/\*\*(.*?)\*\*:\s*(.+)/);
-            
+
             if (keyValueMatch) {
                 currentKey = keyValueMatch[1].toLowerCase().replace(/\s+/g, "_"); // Convert to snake_case
                 data[currentKey] = keyValueMatch[2].trim();
@@ -81,8 +83,8 @@ const TransformResultTab = ({ transformedContent }) => {
         });
 
         console.log("data====>", data);
-        
-    
+
+
         // return data;
     };
 
@@ -126,6 +128,9 @@ const TransformResultTab = ({ transformedContent }) => {
         <div className="my-4 space-y-4">
             <div className="flex justify-end">
                 <EditCreateButton title="Download" buttonType="create" />
+                <button onClick={() => handleResetProcess()} className="bg-red-500 hover:bg-red-700  text-white px-6 py-2 rounded-md">
+                    Reset Process
+                </button>
             </div>
             {transformedContent?.map((content, index) => (
                 <div
@@ -156,8 +161,8 @@ const TransformResultTab = ({ transformedContent }) => {
                         </div>
                         <div
                             className={`transition-all duration-300 ease-in-out ${accordionIndex === index
-                                    ? "max-h-[300px] p-4 bg-white overflow-y-auto"
-                                    : "max-h-0 overflow-hidden"
+                                ? "max-h-[300px] p-4 bg-white overflow-y-auto"
+                                : "max-h-0 overflow-hidden"
                                 }`}
                         >
                             <p className="text-sm text-gray-700">
@@ -167,8 +172,8 @@ const TransformResultTab = ({ transformedContent }) => {
                     </div>
                     <div
                         className={`transition-all duration-300 ease-in-out ${accordionIndex === index
-                                ? "max-h-[300px] p-4 bg-white overflow-y-auto"
-                                : "max-h-0 overflow-hidden"
+                            ? "max-h-[300px] p-4 bg-white overflow-y-auto"
+                            : "max-h-0 overflow-hidden"
                             }`}
                     >
                         <p className="text-sm text-gray-700">

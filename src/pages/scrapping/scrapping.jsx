@@ -6,10 +6,13 @@ import Extract from "../../components/Forms/Extract";
 import TransformTabs from "../../components/Tabs/TransformTabs";
 import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
+import { useDispatch, useSelector } from "react-redux";
+import { resetProcess, setTransformedContent } from "../../redux/historySlice/historySlice";
 
 const Scrapping = () => {
+    const dispatch = useDispatch();
+    const { tabAccess, tabProcessStarted, userURLS, transformedContent } = useSelector((state) => state.history);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [transformedContent, setTransformedContent] = useState();
     const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
     const tabStyle = 'p-3 cursor-pointer font-tbPop font-medium';
@@ -28,7 +31,7 @@ const Scrapping = () => {
 
     const handleContentTransformed = (transformedContent) => {
         try {
-            setTransformedContent(transformedContent);
+            dispatch(setTransformedContent(transformedContent));
             setSelectedTab(2);
         } catch (error) {
             console.log(error);
@@ -37,13 +40,21 @@ const Scrapping = () => {
 
     const handleTebSelected = (index) => {
         try {
-            if(index > selectedTab){
-                setSelectedTab(selectedTab);
-            }else{
+            const hasAccessTab = tabAccess.find(tab => tab.index === index);
+            if (hasAccessTab.access) {
                 setSelectedTab(index);
-            }
+            };
         } catch (error) {
             console.log(error);
+        };
+    };
+
+    const handleResetProcess = () => {
+        try {
+            dispatch(resetProcess());
+            setSelectedTab(0);
+        } catch (error) {
+            console.log("error---->", error);
         };
     };
 
@@ -67,12 +78,12 @@ const Scrapping = () => {
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrappedData?.scraped_id} />
+                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrappedData?.scraped_id} handleResetProcess={handleResetProcess} />
                 </TabPanel>
             </Tabs>
 
             {loading && <PageLoader />}
-            
+
         </div>
     );
 };

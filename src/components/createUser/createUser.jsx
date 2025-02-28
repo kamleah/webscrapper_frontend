@@ -15,6 +15,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     const [eyeIcon, setEyeIcon] = useState(false);
     const [roles, setRoles] = useState([]);
     const [roleLoading, setRoleLoading] = useState(false);
+    
     useEffect(() => {
         const fetchRoles = async () => {
             try {
