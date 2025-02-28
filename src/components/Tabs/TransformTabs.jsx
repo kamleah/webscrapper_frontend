@@ -19,7 +19,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            selectedLanguages: [],
+            languages: [],
         }
     });
 
@@ -27,7 +27,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         { id: 'spanish', label: 'Spanish' },
         { id: 'japanese', label: 'Japanese' },
         { id: 'french', label: 'French' },
-        { id: 'german', label: 'German' }
+        { id: 'german', label: 'German' },
     ];
 
     const GetScrapDetails = (scrapId) => {
@@ -58,6 +58,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         setLoader(true);
         setLoading(true);
         data.content_id = scraped_id;
+        data.languages = ["english", ...data.languages]
         axios.post(configurationEndPoints.translate_content, data).then((response) => {
             handleContentTransformed(response.data.data);
             setLoader(false);
@@ -67,6 +68,8 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         });
     };
+
+    
 
     return (
         <div>
@@ -118,7 +121,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                         {languages.map((language) => (
                             <div key={language.id} className="flex items-center space-x-3">
                                 <Controller
-                                    name="selectedLanguages"
+                                    name="languages"
                                     control={control}
                                     rules={{ required: true }}
                                     render={({ field }) => (
