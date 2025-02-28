@@ -127,7 +127,7 @@ const TransformResultTab = ({ transformedContent }) => {
             <div className="flex justify-end">
                 <EditCreateButton title="Download" buttonType="create" />
             </div>
-            {transformedContent.map((content, index) => (
+            {transformedContent?.map((content, index) => (
                 <div
                     key={index}
                     className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"

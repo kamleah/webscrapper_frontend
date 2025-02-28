@@ -58,26 +58,6 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                 <div>
                     {fields.map((field, index) => (
                         <div key={field.id} className="flex flex-1">
-                            {/* Product Name Input */}
-                            {/* <div className="w-full m-1">
-                                <Controller
-                                    control={control}
-                                    name={`products.${index}.product_name`}
-                                    rules={{ required: "Product Name is required" }}
-                                    render={({ field }) => (
-                                        <TextInputWithLabel
-                                            label="Product Name"
-                                            placeholder="Enter Product Name"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.products?.[index]?.product_name && (
-                                    <p className="text-red-500 text-sm">
-                                        {errors.products[index].product_name.message}
-                                    </p>
-                                )}
-                            </div> */}
 
                             {/* Product URL Input */}
                             <div className="w-full m-1 mt-2">
