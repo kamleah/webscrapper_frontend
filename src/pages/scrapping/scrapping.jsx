@@ -35,9 +35,17 @@ const Scrapping = () => {
         };
     };
 
+    const handleTebSelected = (index) => {
+        try {
+            setSelectedTab(index)
+        } catch (error) {
+            console.log(error);
+        };
+    }
+
     return (
         <div className="p-8 bg-white sm:m-5 rounded-xl">
-            <Tabs selectedIndex={selectedTab} onSelect={(index) => setSelectedTab(index)}>
+            <Tabs selectedIndex={selectedTab} onSelect={(index) => handleTebSelected(index)}>
                 <TabList className="flex space-x-4 border-b">
                     {tabs.map((tab, index) => (
                         <Tab key={index} className={`${tabStyle} ${selectedTab === index ? activeTabStyle : inActiveTabStyle}`}>
