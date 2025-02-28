@@ -4,7 +4,6 @@ import TextInputWithLabel from '../Input/TextInputWithLabel';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import LoadBox from '../Loader/LoadBox';
 import { useSelector } from 'react-redux';
-import api from '../../constants/axiosInstence';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 import axios from 'axios';
 
@@ -81,7 +80,7 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                             </div> */}
 
                             {/* Product URL Input */}
-                            <div className="w-full m-1">
+                            <div className="w-full m-1 mt-2">
                                 <Controller
                                     control={control}
                                     name={`products.${index}.product_url`}
@@ -107,26 +106,7 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                                 )}
                             </div>
 
-                            {/* Product Name Input */}
-                            <div className="w-full m-1">
-                                <Controller
-                                    control={control}
-                                    name={`products.${index}.product_name`}
-                                    rules={{ required: "Product Name is required" }}
-                                    render={({ field }) => (
-                                        <TextInputWithLabel
-                                            label="Product Name"
-                                            placeholder="Enter Product Name"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.products?.[index]?.product_name && (
-                                    <p className="text-red-500 text-sm">
-                                        {errors.products[index].product_name.message}
-                                    </p>
-                                )}
-                            </div>
+                            
 
                             {/* Remove Button */}
                             {fields.length > 1 && <button
