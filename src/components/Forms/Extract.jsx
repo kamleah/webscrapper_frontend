@@ -9,12 +9,11 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { removeUsedURLS, setProcessToggle, setTabAccess, setUsedURLS } from '../../redux/historySlice/historySlice';
 
-const Extract = ({ handleResponseRecieved, setLoading }) => {
+const Extract = ({ handleResponseRecieved, setLoading, handleResetProcess }) => {
     const dispatch = useDispatch();
     const [loader, setLoader] = useState(false);
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
     const { tabAccess, tabProcessStarted, userURLS } = useSelector((state) => state.history);
-
 
     const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm({
         defaultValues: { products: userURLS.length ? userURLS : [{ product_name: '', product_url: '' }] }
@@ -97,8 +96,6 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                                 )}
                             </div>
 
-
-
                             {/* Remove Button */}
                             {fields.length > 1 && <button
                                 type="button"
@@ -111,17 +108,17 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                     ))}
 
                     {/* Add More Button */}
-                    <button
+                    {loggedUserDetails.process_type != "single" && <button
                         type="button"
                         onClick={() => append({ product_name: '', product_url: '' })}
                         className="flex items-center border px-4 py-2 rounded-xl ml-1 mt-2"
                     >
                         Add More <AddSquare size="20" className="ml-2" />
-                    </button>
+                    </button>}
                 </div>
 
                 {/* Submit Button */}
-                <div className="mt-20">
+                {!tabProcessStarted && <div className="mt-20">
                     <div className="pt-3">
                         {loader ? (
                             <LoadBox title="Starting Crawl..." />
@@ -135,7 +132,12 @@ const Extract = ({ handleResponseRecieved, setLoading }) => {
                             </button>
                         )}
                     </div>
-                </div>
+                </div>}
+                {
+                    tabProcessStarted && <button onClick={() => handleResetProcess()} className="w-full bg-red-500 hover:bg-red-700 font-tbPop text-white px-3 py-2.5 rounded-md mt-20">
+                        Reset Process
+                    </button>
+                }
             </form>
         </div>
     );

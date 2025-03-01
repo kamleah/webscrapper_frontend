@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Markdown from 'react-markdown';
 import EditCreateButton from '../Button/EditCreateButton';
 import { useDispatch } from 'react-redux';
-import { resetProcess } from '../../redux/historySlice/historySlice';
 
 const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
     const dispatch = useDispatch();

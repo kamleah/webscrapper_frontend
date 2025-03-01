@@ -34,8 +34,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
     }, []);
 
     const onSubmit = (data) => {
-        const newUser = { id: Date.now(), ...data }; 
-        onUserCreated(newUser);
+        onUserCreated(data);
         reset();
         toggle();
     };
@@ -86,42 +85,42 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                     {errors.email && <Error title="Email is required*" />}
                                                 </div>
                                                 <div>
-                                                    <label className={labelClass}>Full Name*</label>
+                                                    <label className={labelClass}>First Name*</label>
                                                     <input
                                                         type="text"
-                                                        placeholder="Full Name"
+                                                        placeholder="First Name"
                                                         className={inputClass}
-                                                        {...register('fullName', { required: true })}
+                                                        {...register('first_name', { required: true })}
                                                     />
-                                                    {errors.fullName && <Error title="Full Name is required*" />}
+                                                    {errors.first_name && <Error title="First Name is required*" />}
                                                 </div>
                                                 <div>
-                                                    <label className={labelClass}>Username*</label>
+                                                    <label className={labelClass}>Last Name*</label>
                                                     <input
                                                         type="text"
-                                                        placeholder="Username"
+                                                        placeholder="Last Name"
                                                         className={inputClass}
-                                                        {...register('username', { required: true })}
+                                                        {...register('last_name', { required: true })}
                                                     />
-                                                    {errors.username && <Error title="Username is required*" />}
+                                                    {errors.last_name && <Error title="Last Name is required*" />}
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="selectRole" className={`${labelClass}`}>
+                                                    <label htmlFor="user_role" className={`${labelClass}`}>
                                                         Role
                                                     </label>
                                                     <div className="mt-1">
                                                         <select
-                                                            id="selectRole"
-                                                            name="selectRole"
+                                                            id="user_role"
+                                                            name="user_role"
                                                             className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
-                                                            {...register('selectRole', { required: 'Please select a role' })}
+                                                            {...register('user_role', { required: 'Please select a role' })}
                                                             disabled={roleLoading}
                                                         >
                                                             <option value="" disabled>
                                                                 {roleLoading ? "Loading Roles..." : "-- Select Role --"}
                                                             </option>
                                                             {roles.map((role) => (
-                                                                <option key={role.id} value={role.name}>
+                                                                <option key={role.id} value={role.id}>
                                                                     {role.name}
                                                                 </option>
                                                             ))}
@@ -130,15 +129,15 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="selectOption" className={`${labelClass}`}>
-                                                        Select Option
+                                                    <label htmlFor="process_type" className={`${labelClass}`}>
+                                                        Select Process Type
                                                     </label>
                                                     <div className="mt-1">
                                                         <select
-                                                            id="selectOption"
-                                                            name="selectOption"
+                                                            id="process_type"
+                                                            name="process_type"
                                                             className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
-                                                            {...register('selectOption', { required: 'Please select an option' })}
+                                                            {...register('process_type', { required: 'Please select an option' })}
                                                         >
                                                             <option value="" disabled>
                                                                 -- Select an Option --

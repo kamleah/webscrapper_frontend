@@ -70,7 +70,7 @@ const Scrapping = () => {
                 </TabList>
 
                 <TabPanel>
-                    <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} />
+                    <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} />
                 </TabPanel>
 
                 <TabPanel>

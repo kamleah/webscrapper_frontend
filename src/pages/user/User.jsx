@@ -9,11 +9,12 @@ import Table from "../../components/Table/Table";
 import CreateUserModal from "../../components/createUser/createUser";
 import ViewDetailsModal from "../../components/Modals/viewUserModal/viewUserModal";
 import { setLoggedUser } from "../../redux/userSlice/userSlice";
+import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 
 const User = () => {
     const dispatch = useDispatch();
+    const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
     const [users, setUsers] = useState([])
-    console.log("users",users)
     const [isViewUserModalOpen, setViewUserModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -21,7 +22,7 @@ const User = () => {
    useEffect(() => {
     const UserList = async () => {
         try {
-            const response = await axios.get("http://192.168.0.181:8000/account/users-list/?page=1&page_size=10");
+            const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
             setUsers(response.data.results)
         } catch (error) {
             console.log("Error fetching users:", error);
@@ -56,9 +57,16 @@ const User = () => {
     };
 
     const handleUserCreated = (newUser) => {
-        // For simplicity, directly add the new user to Redux state
-        const updatedUsers = [...users, newUser];
-        dispatch(setLoggedUser(updatedUsers));
+        newUser.user_created_by = loggedUserDetails?.id;
+        try {
+            axios.post(configurationEndPoints.user_resgistration, newUser).then((response)=>{
+                console.log(response.data);
+            }).catch((error)=>{
+                console.log(error);
+            })
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const handleDelete = (id) => {
