@@ -9,25 +9,43 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import { ArrowDownToLine } from "lucide-react";
+import usePaginatedData from "../../utils/usePaginatedData";
 import ViewHistoryDetails from "../../components/Modals/viewHistoryDetails/viewHistoryDetails";
-
+import Pagination from "../../components/pagination/pagination";
+import { baseURL } from "../../constants";
+const fetchHistory = async (params) => {
+    const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params });
+    return response.data;
+};
 const History = () => {
     const dispatch = useDispatch();
-    const history = useSelector((state) => state.history.history);
+    // const history = useSelector((state) => state.history.history);
     const [isViewHistoryModalOpen, setViewHistoryModalOpen] = useState(false);
     const [selectedHistory, setSelectedHistory] = useState(null);
+    const {
+        filterData: history,
+        pageNo,
+        pageSize,
+        totalPages,
+        nextIsValid,
+        prevIsValid,
+        pageChangeHandler,
+    } = usePaginatedData(1, 10, fetchHistory);
+    // useEffect(() => {
+    //     const historyList = async () => {
+    //         try {
+    //             const response = await axios.get("http://192.168.0.181:8000/scrap/user-scrap-filter/?page=1&page_size=10")
+    //              dispatch(setHistory(response.data.results));
+    //              console.log("response", response.data.results);
+    //         } catch (error) {
+    //             console.log("Error fetching history:", error);
+    //         }
+    //     }
+    //     historyList()
+    // }, [dispatch])
     useEffect(() => {
-        const historyList = async () => {
-            try {
-                const response = await axios.get("http://192.168.0.181:8000/scrap/user-scrap-filter/?page=1&page_size=10")
-                 dispatch(setHistory(response.data.results));
-                 console.log("response", response.data.results);
-            } catch (error) {
-                console.log("Error fetching history:", error);
-            }
-        }
-        historyList()
-    }, [dispatch])
+        dispatch(setHistory(history));
+    }, [history, dispatch]);
 
     const openViewHistoryModal = (history) => {
         setSelectedHistory(history);
@@ -68,34 +86,34 @@ const History = () => {
         console.log("Delete user with ID:", id);
         setData((prevData) => prevData.filter((user) => user.id !== id));
     };
-   
+
     const columns = [
-        { 
-            field: "urls", 
-            header: "Urls", 
+        {
+            field: "urls",
+            header: "Urls",
             body: (row) => (
                 <h6>
-                    {row?.urls && row.urls.length > 0 
-                        ? row.urls[0].length > 50 
-                        ? `${row.urls[0].substring(0, 50)}...` 
-                        : row.urls[0] 
+                    {row?.urls && row.urls.length > 0
+                        ? row.urls[0].length > 50
+                            ? `${row.urls[0].substring(0, 50)}...`
+                            : row.urls[0]
                         : "--"}
                 </h6>
-            ), 
-            style: { width: "20%" } 
+            ),
+            style: { width: "20%" }
         },
-        { 
-            field: "userInfo", 
-            header: "User Info", 
+        {
+            field: "userInfo",
+            header: "User Info",
             body: (row) => (
                 <div>
                     <h6>{`${row?.user?.first_name || "--"} ${row?.user?.last_name || "--"}`}</h6>
                     <h6>{row?.user?.email || "--"}</h6>
                 </div>
-            ), 
-            style: { width: "40%" } 
+            ),
+            style: { width: "40%" }
         },
-         { field: "date", header: "Date", body: (row) => <h6>{(moment(row?.created_at).format('YYYY-MM-DD')) || "--"}</h6>, style: { width: "20%" } },
+        { field: "date", header: "Date", body: (row) => <h6>{(moment(row?.created_at).format('YYYY-MM-DD')) || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
     return (
@@ -104,10 +122,37 @@ const History = () => {
                 <SectionHeader title="History" />
             </div>
             <Table data={history} columns={columns} />
+            {/* <div className="flex justify-center items-center mt-5 space-x-2">
+                <button
+                    onClick={() => pageChangeHandler(pageNo - 1)}
+                    disabled={!prevIsValid}
+                    className={`px-3 py-1 rounded-full ${prevIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
+                >
+                    {"<"}
+                </button>
+                {[...Array(totalPages)].map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => pageChangeHandler(idx + 1)}
+                        className={`px-3 py-1 rounded-full ${idx + 1 === pageNo ? "bg-blue-500 text-white" : "bg-gray-100"
+                            }`}
+                    >
+                        {idx + 1}
+                    </button>
+                ))}
+                <button
+                    onClick={() => pageChangeHandler(pageNo + 1)}
+                    disabled={!nextIsValid}
+                    className={`px-3 py-1 rounded-full ${nextIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
+                >
+                    {">"}
+                </button>
+            </div> */}
+            <Pagination currentPage={pageNo} totalPages={totalPages} onPageChange={pageChangeHandler} />
             <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
                 title="History Details"
-                data={selectedHistory}/>
+                data={selectedHistory} />
 
         </div>
     );
