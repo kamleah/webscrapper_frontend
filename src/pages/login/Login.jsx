@@ -1,47 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import SiVerceImage from '../../components/Image/SiVerceImage';
-import loginLogo from '../../assets/illustrations/login_illustration.jpg'
-import Input from '../../components/Input/Input';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { emailValidation, requiredField } from '../../utils/Validation/FormValidationRule';
-import IconButton from '../../components/Button/IconButton';
-import IconInput from '../../components/Input/IconInput';
 import { Eye, EyeSlash } from 'iconsax-react';
-import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
-// import { adminLogin } from '../../redux/thunk/AuthThunk';
 import leftimage from '../../assets/images/leftImage.png'
 import { inputClass } from '../../utils/CustomClass';
 import DocumentHead from '../../components/Document/DocumentHead';
+import { setLoggedUser, setLoggedUserDetails, setRole, setToken } from '../../redux/authSlice/authSlice';
+import axios from 'axios';
+import { authEndPoints } from '../../endPoints/AuthEndPoint';
+import LoadBox from '../../components/Loader/LoadBox';
 import { toast } from 'react-toastify';
-import { setLoggedUser } from '../../redux/authSlice/authSlice';
 
 const Login = () => {
-  const { register, control, handleSubmit, formState: { errors } } = useForm();
+  const { register, control, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-  // const { error, isLogged } = useSelector((state) => state.auth);
-   const isLogged = useSelector((state) => state.auth.isLogged);
 
-  const onSubmit = (data) => {
-    console.log(data)
-    dispatch(setLoggedUser(true))
-    // dispatch(adminLogin(data));
+  const onSubmit = (payload) => {
+    try {
+      setLoader(true);
+      axios.post(`${authEndPoints.login}`, payload).then((response) => {
+        setLoader(false);
+        console.log(response.data.data);
+        
+        dispatch(setToken({ ...response.data.data, isLogged: true }));
+        dispatch(setRole({ role: response.data.data.user_role.name }));
+        dispatch(setLoggedUserDetails({...response.data.data}));
+      }).catch((error) => {
+        toast.error('Please Enter Valid Credentails')
+        console.log(error);
+      })
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      console.log(error);
+    }
   };
 
-  console.log("isLogged--->", isLogged);
-  // console.log("error--->", error);
-
-  // useEffect(() => {
-  //   if(error){
-  //     toast(error)
-  //   }
-  // }, [error])
-  
-  
   return (
     <>
       <DocumentHead title='Login' />
@@ -105,18 +103,19 @@ const Login = () => {
                           <EyeSlash size={24} className='text-gray-400 cursor-pointer' />
                       }
                     </span>
-                    {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
                   </div>
+                  {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
                 </div>
-                <div className='pt-3'>
-                  {loader ? <LoadBox title='Submitting' /> : <button
+
+                <div className="pt-3">
+                  <button
                     type="submit"
-                    className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
-                  >
-                    Sign in
-                  </button>}
+                    disabled={!isValid || loader}
+                    className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${isValid ? 'bg-blue-500 hover:bg-sky-500' : 'bg-gray-300 cursor-not-allowed'}`} >
+                    {loader ? 'Signing In...' : 'Sign in'}
+                  </button>
                 </div>
-              </div>
+            </div>
             </div>
           </form>
         </div>
@@ -124,5 +123,4 @@ const Login = () => {
     </>
   )
 }
-
 export default Login

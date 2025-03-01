@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import SiVerceImage from '../../components/Image/SiVerceImage';
 import loginLogo from '../../assets/illustrations/login_illustration.jpg'
 import Input from '../../components/Input/Input';
 import { useForm } from 'react-hook-form';

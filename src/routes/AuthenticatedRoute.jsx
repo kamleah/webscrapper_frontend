@@ -14,7 +14,6 @@ const AuthenticatedRoute = () => {
         <Sidebar>
             <Routes>
                 <Route path="/" element={<Scrapping />} />
-                {/* <Route path="/scrapping" element={<Scrapping />} /> */}
                 <Route path="/history" element={<History />} />
                 <Route path="/users" element={<User />} />
             </Routes>
