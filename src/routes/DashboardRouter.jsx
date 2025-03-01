@@ -32,23 +32,6 @@ export const DashboardRouter = [
         title: 'User',
         icon: <User size="24" variant="TwoTone" />,
         link: '/users',
-    },
-    // {
-    //     title: 'User',
-    //     icon: <User size="24" variant="TwoTone" />,
-    //     link: '/admin-users',
-    //     subMenu: [
-    //         {
-    //             title: 'Admin',
-    //             icon: <Cup size="24" variant="TwoTone" />,
-    //             link: '/admin-users',
-    //         },
-    //         {
-    //             title: 'User',
-    //             icon: <Cup size="24" variant="TwoTone" />,
-    //             link: '/storages',
-    //         }
-    //     ]
-    // },
+    }
 ]
 

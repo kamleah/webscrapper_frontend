@@ -10,6 +10,7 @@ import axios from "axios";
 import moment from "moment";
 import { ArrowDownToLine } from "lucide-react";
 import ViewHistoryDetails from "../../components/Modals/viewHistoryDetails/viewHistoryDetails";
+import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -19,9 +20,8 @@ const History = () => {
     useEffect(() => {
         const historyList = async () => {
             try {
-                const response = await axios.get("http://192.168.0.181:8000/scrap/user-scrap-filter/?page=1&page_size=10")
-                 dispatch(setHistory(response.data.results));
-                 console.log("response", response.data.results);
+                const response = await axios.get(`${configurationEndPoints.user_scrap_filter}?page=1&page_size=10`)
+                dispatch(setHistory(response.data.results));
             } catch (error) {
                 console.log("Error fetching history:", error);
             }
@@ -68,34 +68,34 @@ const History = () => {
         console.log("Delete user with ID:", id);
         setData((prevData) => prevData.filter((user) => user.id !== id));
     };
-   
+
     const columns = [
-        { 
-            field: "urls", 
-            header: "Urls", 
+        {
+            field: "urls",
+            header: "Urls",
             body: (row) => (
                 <h6>
-                    {row?.urls && row.urls.length > 0 
-                        ? row.urls[0].length > 50 
-                        ? `${row.urls[0].substring(0, 50)}...` 
-                        : row.urls[0] 
+                    {row?.urls && row.urls.length > 0
+                        ? row.urls[0].length > 50
+                            ? `${row.urls[0].substring(0, 50)}...`
+                            : row.urls[0]
                         : "--"}
                 </h6>
-            ), 
-            style: { width: "20%" } 
+            ),
+            style: { width: "20%" }
         },
-        { 
-            field: "userInfo", 
-            header: "User Info", 
+        {
+            field: "userInfo",
+            header: "User Info",
             body: (row) => (
                 <div>
                     <h6>{`${row?.user?.first_name || "--"} ${row?.user?.last_name || "--"}`}</h6>
                     <h6>{row?.user?.email || "--"}</h6>
                 </div>
-            ), 
-            style: { width: "40%" } 
+            ),
+            style: { width: "40%" }
         },
-         { field: "date", header: "Date", body: (row) => <h6>{(moment(row?.created_at).format('YYYY-MM-DD')) || "--"}</h6>, style: { width: "20%" } },
+        { field: "date", header: "Date", body: (row) => <h6>{(moment(row?.created_at).format('YYYY-MM-DD')) || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
     return (
@@ -107,7 +107,7 @@ const History = () => {
             <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
                 title="History Details"
-                data={selectedHistory}/>
+                data={selectedHistory} />
 
         </div>
     );
