@@ -9,25 +9,32 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import { ArrowDownToLine } from "lucide-react";
+import usePaginatedData from "../../utils/usePaginatedData";
 import ViewHistoryDetails from "../../components/Modals/viewHistoryDetails/viewHistoryDetails";
-import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
-
+import Pagination from "../../components/pagination/pagination";
+import { baseURL } from "../../constants";
+const fetchHistory = async (params) => {
+    const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params });
+    return response.data;
+};
 const History = () => {
     const dispatch = useDispatch();
-    const history = useSelector((state) => state.history.history);
+    // const history = useSelector((state) => state.history.history);
     const [isViewHistoryModalOpen, setViewHistoryModalOpen] = useState(false);
     const [selectedHistory, setSelectedHistory] = useState(null);
+    const {
+        filterData: history,
+        pageNo,
+        pageSize,
+        totalPages,
+        nextIsValid,
+        prevIsValid,
+        pageChangeHandler,
+    } = usePaginatedData(1, 10, fetchHistory);
+
     useEffect(() => {
-        const historyList = async () => {
-            try {
-                const response = await axios.get(`${configurationEndPoints.user_scrap_filter}?page=1&page_size=10`)
-                dispatch(setHistory(response.data.results));
-            } catch (error) {
-                console.log("Error fetching history:", error);
-            }
-        }
-        historyList()
-    }, [dispatch])
+        dispatch(setHistory(history));
+    }, [history, dispatch]);
 
     const openViewHistoryModal = (history) => {
         setSelectedHistory(history);
@@ -104,6 +111,33 @@ const History = () => {
                 <SectionHeader title="History" />
             </div>
             <Table data={history} columns={columns} />
+            {/* <div className="flex justify-center items-center mt-5 space-x-2">
+                <button
+                    onClick={() => pageChangeHandler(pageNo - 1)}
+                    disabled={!prevIsValid}
+                    className={`px-3 py-1 rounded-full ${prevIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
+                >
+                    {"<"}
+                </button>
+                {[...Array(totalPages)].map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => pageChangeHandler(idx + 1)}
+                        className={`px-3 py-1 rounded-full ${idx + 1 === pageNo ? "bg-blue-500 text-white" : "bg-gray-100"
+                            }`}
+                    >
+                        {idx + 1}
+                    </button>
+                ))}
+                <button
+                    onClick={() => pageChangeHandler(pageNo + 1)}
+                    disabled={!nextIsValid}
+                    className={`px-3 py-1 rounded-full ${nextIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
+                >
+                    {">"}
+                </button>
+            </div> */}
+            <Pagination currentPage={pageNo} totalPages={totalPages} onPageChange={pageChangeHandler} />
             <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
                 title="History Details"
