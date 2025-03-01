@@ -3,14 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { setProcessToggle, setScrappedData, setTabAccess, toggleLanguage } from '../../redux/historySlice/historySlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
-    const [scrappedData, setScrappedData] = useState([]);
+    const dispatch = useDispatch();
     const [loader, setLoader] = useState(false);
     const [accordian, setAccordian] = useState(null);
     const toggleAccordion = (index) => {
         setAccordian(accordian === index ? null : index);
     };
+    const { scrappedData, languages, selectedLanguages } = useSelector((state) => state.history);
+    
     const {
         control,
         handleSubmit,
@@ -19,23 +23,16 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            languages: [],
+            languages: selectedLanguages.length ? selectedLanguages : [],
         }
     });
-
-    const languages = [
-        { id: 'spanish', label: 'Spanish' },
-        { id: 'japanese', label: 'Japanese' },
-        { id: 'french', label: 'French' },
-        { id: 'german', label: 'German' },
-    ];
 
     const GetScrapDetails = (scrapId) => {
         try {
             setLoading(true);
             axios.get(`${configurationEndPoints.user_scrap_by_id}${scrapId}/`)
                 .then((response) => {
-                    setScrappedData(response.data.data.scraped_data.scrap_data);
+                    dispatch(setScrappedData(response.data.data.scraped_data.scrap_data));
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -55,6 +52,8 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     }, [scraped_id]);
 
     const onSubmit = (data) => {
+        dispatch(setProcessToggle(true));
+        dispatch(setTabAccess({ index: 2, access: true }));
         setLoader(true);
         setLoading(true);
         data.content_id = scraped_id;
@@ -69,7 +68,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         });
     };
 
-    
 
     return (
         <div>
@@ -129,13 +127,15 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                             type="checkbox"
                                             id={language.id}
                                             value={language.id}
-                                            checked={field.value.includes(language.id)}
+                                            checked={selectedLanguages.includes(language.id)}
                                             onChange={() => {
+                                                dispatch(toggleLanguage(language.id))
                                                 const newValue = field.value.includes(language.id)
                                                     ? field.value.filter((lang) => lang !== language.id)
                                                     : [...field.value, language.id];
                                                 field.onChange(newValue);
                                             }}
+                                            // onChange={() => dispatch(toggleLanguage(language.id))}
                                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                         />
                                     )}
