@@ -13,7 +13,11 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     const toggleAccordion = (index) => {
         setAccordian(accordian === index ? null : index);
     };
+
     const { scrappedData, languages, selectedLanguages } = useSelector((state) => state.history);
+    console.log("scrappedData-->", scrappedData);
+    console.log("languages", languages);
+    
     
     const {
         control,
@@ -23,7 +27,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            languages: selectedLanguages.length ? selectedLanguages : [],
+            languages: selectedLanguages?.length ? selectedLanguages : [],
         }
     });
 
@@ -72,7 +76,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     return (
         <div>
             <div className='my-5'>
-                {scrappedData.map((data, index) => (
+                {scrappedData?.map((data, index) => (
                     <div
                         key={index}
                         className="border border-gray-200 rounded-lg mb-4 shadow-sm overflow-hidden"
@@ -116,7 +120,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900">Select Languages</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        {languages.map((language) => (
+                        {languages?.map((language) => (
                             <div key={language.id} className="flex items-center space-x-3">
                                 <Controller
                                     name="languages"

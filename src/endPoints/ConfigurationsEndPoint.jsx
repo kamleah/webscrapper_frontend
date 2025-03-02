@@ -6,4 +6,5 @@ export const configurationEndPoints = {
     user_resgistration: `${baseURL}account/registration/`,
     user_list: `${baseURL}account/users-list/`,
     user_scrap_filter: `${baseURL}scrap/user-scrap-filter/`,
+    translation_result_json: `${baseURL}scrap/translations-results/`,
 };

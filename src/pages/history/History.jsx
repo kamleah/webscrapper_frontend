@@ -13,15 +13,17 @@ import usePaginatedData from "../../utils/usePaginatedData";
 import ViewHistoryDetails from "../../components/Modals/viewHistoryDetails/viewHistoryDetails";
 import Pagination from "../../components/pagination/pagination";
 import { baseURL } from "../../constants";
-const fetchHistory = async (params) => {
-    const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params });
-    return response.data;
-};
+
 const History = () => {
     const dispatch = useDispatch();
-    // const history = useSelector((state) => state.history.history);
     const [isViewHistoryModalOpen, setViewHistoryModalOpen] = useState(false);
     const [selectedHistory, setSelectedHistory] = useState(null);
+
+    const fetchHistory = async (params) => {
+        const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params });
+        return response.data;
+    };
+
     const {
         filterData: history,
         pageNo,
@@ -72,7 +74,6 @@ const History = () => {
     );
 
     const handleDelete = (id) => {
-        console.log("Delete user with ID:", id);
         setData((prevData) => prevData.filter((user) => user.id !== id));
     };
 
