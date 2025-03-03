@@ -13,7 +13,7 @@ const Sidebar = ({ children }) => {
   const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
   const filtered = DashboardRouter.filter((routes)=> routes.title != "User")
   const removedArray = loggedUserDetails.user_role.name == "Employee" ? filtered : DashboardRouter
-
+  
   return (
     <>
       <div className="w-full h-screen  flex ">

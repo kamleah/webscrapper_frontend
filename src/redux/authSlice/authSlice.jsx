@@ -17,7 +17,6 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setToken(state, action) {
-            console.log("action.payload-->", action.payload);
             state.refreshToken = action.payload.refresh;
             state.accessToken = action.payload.access;
             state.isManualLogin = action.payload.isManualLogin;
@@ -30,14 +29,13 @@ const authSlice = createSlice({
             state.isLogged = false;
             state.refreshToken = undefined;
             state.accessToken = undefined;
-            state.isManualLogin = true;
+            state.isManualLogin = false;
             state.status = null;
             state.error = null;
         },
 
         setLoggedUser: (state, action) => {
             state.isLogged = action.payload
-            console.log(action.payload, "actioj payloe")
         },
 
         setLoggedUserDetails: (state, action) => {

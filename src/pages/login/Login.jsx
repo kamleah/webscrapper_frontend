@@ -10,8 +10,10 @@ import axios from 'axios';
 import { authEndPoints } from '../../endPoints/AuthEndPoint';
 import LoadBox from '../../components/Loader/LoadBox';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
   const { register, control, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
@@ -24,11 +26,10 @@ const Login = () => {
       setLoader(true);
       axios.post(`${authEndPoints.login}`, payload).then((response) => {
         setLoader(false);
-        console.log(response.data.data);
-        
         dispatch(setToken({ ...response.data.data, isLogged: true }));
         dispatch(setRole({ role: response.data.data.user_role.name }));
-        dispatch(setLoggedUserDetails({...response.data.data}));
+        dispatch(setLoggedUserDetails({ ...response.data.data }));
+        navigate('/');
       }).catch((error) => {
         toast.error('Please Enter Valid Credentails')
         console.log(error);
@@ -115,7 +116,7 @@ const Login = () => {
                     {loader ? 'Signing In...' : 'Sign in'}
                   </button>
                 </div>
-            </div>
+              </div>
             </div>
           </form>
         </div>
