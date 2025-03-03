@@ -7,4 +7,5 @@ export const configurationEndPoints = {
     user_list: `${baseURL}account/users-list/`,
     user_scrap_filter: `${baseURL}scrap/user-scrap-filter/`,
     translation_result_json: `${baseURL}scrap/translations-results/`,
+    delete_history: `${baseURL}scrap/delete-history/`,
 };

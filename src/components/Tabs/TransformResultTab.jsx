@@ -34,7 +34,7 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
                         id: contentId
                     };
                     dispatch(setTransformedContentResult(payload));
-                    downloadCSV(payload);
+                    downloadCSV(payload.result);
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -80,6 +80,7 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
 
     const downloadCSV = (productArray) => {
         const content_json_array = [];
+        console.log("productArray", productArray);
         productArray.map((content)=>{
             if(content.content_json.product){
                 content_json_array.push({[transformedContentResult[0].name]:content.content_json.product})
