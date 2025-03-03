@@ -16,7 +16,7 @@ const Extract = ({ handleResponseRecieved, setLoading, handleResetProcess }) => 
     const { tabAccess, tabProcessStarted, userURLS } = useSelector((state) => state.history);
 
     const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm({
-        defaultValues: { products: userURLS.length ? userURLS : [{ product_name: '', product_url: '' }] }
+        defaultValues: { products: userURLS?.length ? userURLS : [{ product_name: '', product_url: '' }] }
     });
 
     const { fields, append, remove } = useFieldArray({
