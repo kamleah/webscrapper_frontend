@@ -88,7 +88,7 @@ const PrivateLayout = ({ children }) => {
         </header>
         <div className={`flex flex-col items-center mb-10 mt-12`}>
           <div className="flex items-center space-x-2">
-            <div className={`text-gradient text-xl font-extrabold text-center text-gray-600 mb-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>Siverce</div>
+            <div className={`text-gradient text-xl font-extrabold text-center text-gray-600 mb-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>Scrapper</div>
           </div>
           <img
             className={`rounded-full mt-4 transition-all duration-300 transform ${isOpen ? 'w-20 h-20 rotate-[360deg]' : 'rotate-[-360deg]'}`}

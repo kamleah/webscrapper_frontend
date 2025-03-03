@@ -4,6 +4,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../../redux/authSlice/authSlice';
+import { resetProcess } from '../../../redux/historySlice/historySlice';
 
 export default function LogoutModal({ open, setOpen }) {
     const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function LogoutModal({ open, setOpen }) {
     // ============================= logout user dashbaord ================================
     const logOut = () => {
         dispatch(logout());
+        dispatch(resetProcess());
     };
 
     const cancelButtonRef = useRef(null)
