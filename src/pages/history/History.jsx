@@ -129,14 +129,14 @@ const History = () => {
     //     return rowData.map(item => {
     //         const transformedItem = {};
     //         const languagePrefix = item.language.toLowerCase();
-    
+
     //         if (item.content_json && Object.keys(item.content_json).length > 0) {
     //             Object.keys(item.content_json).forEach(key => {
     //                 console.log("item.content_json[key]", item.content_json[key]);
     //                 transformedItem[`${languagePrefix}_${key}`] = item.content_json[key];
     //             });
     //         }
-    
+
     //         return transformedItem; // Ensure an object is returned for each item
     //     }).filter(item => Object.keys(item).length > 0); // Remove empty objects
     // };
@@ -145,66 +145,66 @@ const History = () => {
     //     return rowData.map(item => {
     //         const transformedItem = {};
     //         const languagePrefix = item.language.toLowerCase();
-        
+
     //         if (item.content_json && Object.keys(item.content_json).length > 0) {
     //             Object.keys(item.content_json).forEach(key => {
     //                 let value = item.content_json[key];
-    
+
     //                 // Handle arrays by joining them with a comma
     //                 if (Array.isArray(value)) {
     //                     value = value.map(v => 
     //                         typeof v === "object" ? JSON.stringify(v) : v
     //                     ).join(", ");
     //                 }
-    
+
     //                 // Handle objects by converting them into key-value pairs
     //                 else if (typeof value === "object" && value !== null) {
     //                     value = Object.entries(value)
     //                         .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
     //                         .join(" | ");
     //                 }
-    
+
     //                 transformedItem[`${languagePrefix}_${key}`] = value;
     //             });
     //         }
-    
+
     //         return transformedItem; // Ensure an object is returned for each item
     //     }).filter(item => Object.keys(item).length > 0); // Remove empty objects
     // };
 
     const transformDataForCSV = (rowData) => {
         const transformedItem = {}; // Single row object
-    
+
         rowData.forEach(item => {
             const languagePrefix = item.language.toLowerCase();
-            
+
             if (item.content_json && Object.keys(item.content_json).length > 0) {
                 Object.keys(item.content_json).forEach(key => {
                     let value = item.content_json[key];
-    
+
                     // Handle arrays by joining them with a comma
                     if (Array.isArray(value)) {
-                        value = value.map(v => 
+                        value = value.map(v =>
                             typeof v === "object" ? JSON.stringify(v) : v
                         ).join(", ");
                     }
-    
+
                     // Handle objects by converting them into key-value pairs
                     else if (typeof value === "object" && value !== null) {
                         value = Object.entries(value)
                             .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
                             .join(" | ");
                     }
-    
+
                     // Store in the single row object
                     transformedItem[`${languagePrefix}_${key}`] = value;
                 });
             }
         });
-    
+
         return [transformedItem]; // Return as an array containing a single object (one row)
     };
-    
+
 
     const downloadCSV = (csvContent, filename) => {
         const blob = new Blob([csvContent], { type: "text/csv" });
@@ -248,6 +248,8 @@ const History = () => {
     // };
 
     const downloadInExcel = (rowData) => {
+        console.log(rowData);
+
         try {
             if (rowData.user_scrap_history.length > 0) {
                 if (Object.keys(rowData.user_scrap_history[0].content_json).length === 0) {
@@ -269,6 +271,48 @@ const History = () => {
         }
     };
 
+    // Function to convert JSON to CSV format
+    const convertToCSV_V2 = (jsonArray) => {
+        const headers = Object.keys(jsonArray[0]).join(",");
+        const rows = jsonArray.map((obj) =>
+            Object.values(obj)
+                .map((val) => `"${val}"`)
+                .join(",")
+        );
+        return [headers, ...rows].join("\n");
+    };
+
+    const downloadCSV_V2 = (jsonData) => {
+        const csvData = convertToCSV_V2(jsonData);
+        const blob = new Blob([csvData], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+
+        // Generate filename with current date & time
+        const now = new Date();
+        const formattedDate = now
+            .toISOString()
+            .replace(/T/, "_") // Replace 'T' with '_'
+            .replace(/:/g, "-") // Replace colons with dashes
+            .split(".")[0]; // Remove milliseconds
+        const fileName = `Scrapped_Content_${formattedDate}.csv`;
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+
+    const downloadInExcelV2 = (row) => {
+        try {
+            axios.post(configurationEndPoints.download_scrap, { "scrapped_id": row.id }).then((response) => {
+                downloadCSV_V2(response.data.data);
+            })
+        } catch (error) {
+            console.log(error);
+        };
+    };
+
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
             <button
@@ -279,7 +323,7 @@ const History = () => {
                 <Eye size="20" className="text-blue-500" />
             </button>
             <button
-                onClick={() => downloadInExcel(row)}
+                onClick={() => downloadInExcelV2(row)}
                 id={row.id}
                 className="bg-yellow-100 px-1.5 py-2 rounded-sm"
             >

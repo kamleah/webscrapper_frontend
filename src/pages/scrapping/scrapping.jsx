@@ -94,7 +94,7 @@ const Scrapping = () => {
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrapId} handleResetProcess={handleResetProcess} />
+                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrapId} handleResetProcess={handleResetProcess} setLoading={setLoading} />
                 </TabPanel>
             </Tabs>
 

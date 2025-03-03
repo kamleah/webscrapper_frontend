@@ -8,4 +8,5 @@ export const configurationEndPoints = {
     user_scrap_filter: `${baseURL}scrap/user-scrap-filter/`,
     translation_result_json: `${baseURL}scrap/translations-results/`,
     delete_history: `${baseURL}scrap/delete-history/`,
+    download_scrap: `${baseURL}scrap/download-scrap/`
 };
