@@ -20,7 +20,6 @@ const Login = () => {
   const [eyeIcon, setEyeIcon] = useState(false)
   const [loader, setLoader] = useState(false);
 
-
   const onSubmit = (payload) => {
     try {
       setLoader(true);

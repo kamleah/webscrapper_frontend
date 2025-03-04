@@ -15,6 +15,7 @@ import Pagination from "../../components/pagination/pagination";
 import { baseURL } from "../../constants";
 import DeleteModal from '../../components/Modals/DeleteModal/DeleteModal';
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
+import PageLoader from "../../components/Loader/PageLoader";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const History = () => {
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
     const [open, setOpen] = useState(false);
     const [delId, setDelId] = useState(0);
-
+    const [loading, setLoading] = useState(false);
 
     const fetchHistory = async (params) => {
         const payload = {
@@ -42,6 +43,7 @@ const History = () => {
         nextIsValid,
         prevIsValid,
         pageChangeHandler,
+        fetchData,
     } = usePaginatedData(1, 10, fetchHistory);
 
     useEffect(() => {
@@ -58,22 +60,19 @@ const History = () => {
         setViewHistoryModalOpen(false);
     };
 
-    const deleteHistory = (historyId) => {
+    const deleteHistory = async (historyId) => {
         try {
-            axios.delete(`${configurationEndPoints.delete_history}${historyId}/`).then(async (response) => {
-                const updatedHistory = await fetchHistory({
-                    "page": pageNo,
-                    "page_size": pageSize,
-                });
-                dispatch(setHistory(updatedHistory.results));
-            }).catch((error) => {
-                console.log(error);
-            })
+            await axios.delete(`${configurationEndPoints.delete_history}${historyId}/`);
+            await fetchData({ page: pageNo, page_size: pageSize });
+            const updatedHistory = await fetchHistory({
+                page: pageNo,
+                page_size: pageSize,
+            });
+            dispatch(setHistory(updatedHistory.results));
         } catch (error) {
-            console.log(error);
+            console.log("Error deleting history:", error);
         }
     };
-
     const deleteData = () => {
         deleteHistory(delId);
         setOpen(!open);
@@ -88,16 +87,6 @@ const History = () => {
         }
     };
 
-    // const getUniqueKeys = (arr) => {
-    //     const keysSet = new Set();
-
-    //     arr.forEach(obj => {
-    //         Object.keys(obj).forEach(key => keysSet.add(key));
-    //     });
-
-    //     return Array.from(keysSet);
-    // };
-
     const getUniqueKeysWithLanguage = (rowData) => {
         const keysSet = new Set();
 
@@ -110,7 +99,6 @@ const History = () => {
 
         return Array.from(keysSet);
     };
-
     const generateCSVFile = (headers, rowData) => {
         let csvContent = headers.join(",") + "\n"; // Add header row
 
@@ -124,53 +112,6 @@ const History = () => {
 
         return csvContent;
     };
-
-    // const transformDataForCSV_1 = (rowData, headers) => {
-    //     return rowData.map(item => {
-    //         const transformedItem = {};
-    //         const languagePrefix = item.language.toLowerCase();
-
-    //         if (item.content_json && Object.keys(item.content_json).length > 0) {
-    //             Object.keys(item.content_json).forEach(key => {
-    //                 console.log("item.content_json[key]", item.content_json[key]);
-    //                 transformedItem[`${languagePrefix}_${key}`] = item.content_json[key];
-    //             });
-    //         }
-
-    //         return transformedItem; // Ensure an object is returned for each item
-    //     }).filter(item => Object.keys(item).length > 0); // Remove empty objects
-    // };
-
-    // const transformDataForCSV_2 = (rowData, headers) => {
-    //     return rowData.map(item => {
-    //         const transformedItem = {};
-    //         const languagePrefix = item.language.toLowerCase();
-
-    //         if (item.content_json && Object.keys(item.content_json).length > 0) {
-    //             Object.keys(item.content_json).forEach(key => {
-    //                 let value = item.content_json[key];
-
-    //                 // Handle arrays by joining them with a comma
-    //                 if (Array.isArray(value)) {
-    //                     value = value.map(v => 
-    //                         typeof v === "object" ? JSON.stringify(v) : v
-    //                     ).join(", ");
-    //                 }
-
-    //                 // Handle objects by converting them into key-value pairs
-    //                 else if (typeof value === "object" && value !== null) {
-    //                     value = Object.entries(value)
-    //                         .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
-    //                         .join(" | ");
-    //                 }
-
-    //                 transformedItem[`${languagePrefix}_${key}`] = value;
-    //             });
-    //         }
-
-    //         return transformedItem; // Ensure an object is returned for each item
-    //     }).filter(item => Object.keys(item).length > 0); // Remove empty objects
-    // };
 
     const transformDataForCSV = (rowData) => {
         const transformedItem = {}; // Single row object
@@ -216,61 +157,6 @@ const History = () => {
         document.body.removeChild(link);
     };
 
-    // const downloadInExcel = (rowData) => {
-    //     try {
-    //         if (rowData.user_scrap_history.length > 0) {
-    //             if (Object.keys(rowData.user_scrap_history[0].content_json).length === 0) {
-    //                 alert("Scrapped JSON is not generated");
-    //             } else {
-    //                 const contentJsonArray = rowData.user_scrap_history.map(item => item.content_json);
-    //                 const headers = getUniqueKeys(contentJsonArray);
-    //                 let csvData = headers.join(",") + "\n"; // CSV headers
-
-    //                 rowData.user_scrap_history.forEach(historyData => {
-    //                     if (Object.keys(historyData.content_json).length > 0) {
-    //                         console.log(historyData.language);
-    //                         console.log(historyData.name);
-    //                         console.log(historyData.content_json);
-
-    //                         const data = generateCSVFile(headers, historyData.language, historyData.name, historyData.content_json);
-    //                         csvData += data;
-    //                     }
-    //                 });
-
-    //                 downloadCSV(csvData, "Scrapped_Data.csv");
-    //             }
-    //         } else {
-    //             alert("Scrapped JSON is not generated");
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-
-    const downloadInExcel = (rowData) => {
-        console.log(rowData);
-
-        try {
-            if (rowData.user_scrap_history.length > 0) {
-                if (Object.keys(rowData.user_scrap_history[0].content_json).length === 0) {
-                    alert("Scrapped JSON is not generated");
-                } else {
-                    const headers = getUniqueKeysWithLanguage(rowData.user_scrap_history);
-                    const transformedData = transformDataForCSV(rowData.user_scrap_history, headers);
-                    console.log(transformedData);
-
-
-                    const csvData = generateCSVFile(headers, transformedData);
-                    downloadCSV(csvData, "Scrapped_Data.csv");
-                }
-            } else {
-                alert("Scrapped JSON is not generated");
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     // Function to convert JSON to CSV format
     const convertToCSV_V2 = (jsonArray) => {
         const headers = Object.keys(jsonArray[0]).join(",");
@@ -283,33 +169,41 @@ const History = () => {
     };
 
     const downloadCSV_V2 = (jsonData) => {
-        const csvData = convertToCSV_V2(jsonData);
-        const blob = new Blob([csvData], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
+        try {
+            setLoading(true);
+            const csvData = convertToCSV_V2(jsonData);
+            const blob = new Blob([csvData], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
 
-        // Generate filename with current date & time
-        const now = new Date();
-        const formattedDate = now
-            .toISOString()
-            .replace(/T/, "_") // Replace 'T' with '_'
-            .replace(/:/g, "-") // Replace colons with dashes
-            .split(".")[0]; // Remove milliseconds
-        const fileName = `Scrapped_Content_${formattedDate}.csv`;
+            // Generate filename with current date & time
+            const now = new Date();
+            const formattedDate = now
+                .toISOString()
+                .replace(/T/, "_") // Replace 'T' with '_'
+                .replace(/:/g, "-") // Replace colons with dashes
+                .split(".")[0]; // Remove milliseconds
+            const fileName = `Scrapped_Content_${formattedDate}.csv`;
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            setLoading(false);
+        }
     };
 
     const downloadInExcelV2 = (row) => {
         try {
+            setLoading(true);
             axios.post(configurationEndPoints.download_scrap, { "scrapped_id": row.id }).then((response) => {
                 downloadCSV_V2(response.data.data);
+                setLoading(false);
             })
         } catch (error) {
             console.log(error);
+            setLoading(false);
         };
     };
 
@@ -329,12 +223,12 @@ const History = () => {
             >
                 <ArrowDownToLine size="20" className="text-yellow-500" />
             </button>
-            {/* <button
+            <button
                 onClick={() => toggleModalBtn(row.id)}
                 id={row.id}
                 className="bg-red-100 px-1.5 py-2 rounded-sm">
                 <Trash size="20" className="text-red-500" />
-            </button> */}
+            </button>
         </div>
     );
 
@@ -373,32 +267,6 @@ const History = () => {
                 <SectionHeader title="History" />
             </div>
             <Table data={history} columns={columns} />
-            {/* <div className="flex justify-center items-center mt-5 space-x-2">
-                <button
-                    onClick={() => pageChangeHandler(pageNo - 1)}
-                    disabled={!prevIsValid}
-                    className={`px-3 py-1 rounded-full ${prevIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
-                >
-                    {"<"}
-                </button>
-                {[...Array(totalPages)].map((_, idx) => (
-                    <button
-                        key={idx}
-                        onClick={() => pageChangeHandler(idx + 1)}
-                        className={`px-3 py-1 rounded-full ${idx + 1 === pageNo ? "bg-blue-500 text-white" : "bg-gray-100"
-                            }`}
-                    >
-                        {idx + 1}
-                    </button>
-                ))}
-                <button
-                    onClick={() => pageChangeHandler(pageNo + 1)}
-                    disabled={!nextIsValid}
-                    className={`px-3 py-1 rounded-full ${nextIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
-                >
-                    {">"}
-                </button>
-            </div> */}
             <Pagination currentPage={pageNo} totalPages={totalPages} onPageChange={pageChangeHandler} />
             <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
@@ -414,7 +282,7 @@ const History = () => {
                 }
                 open={open}
             />
-
+            {loading && <PageLoader />}
         </div>
     );
 };

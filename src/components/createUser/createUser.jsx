@@ -8,36 +8,57 @@ import { formBtn1, inputClass, labelClass } from "../../utils/CustomClass";
 import Error from "../Errors/Error";
 import LoadBox from "../Loader/LoadBox";
 import { baseURL } from "../../constants";
+import { useSelector } from "react-redux";
+import { authEndPoints } from "../../endPoints/AuthEndPoint";
 
-export default function CreateUserModal({ isOpen, onUserCreated, toggle, props = {} }) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+export default function CreateUserModal({ isOpen, onUserCreated,onUserEdit, closeOnSuccess = true, toggle, props = {}, formType, data }) {
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
     const [loader, setLoader] = useState(false);
     const [eyeIcon, setEyeIcon] = useState(false);
     const [roles, setRoles] = useState([]);
     const [roleLoading, setRoleLoading] = useState(false);
-    
-    useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                setRoleLoading(true);
-                const response = await axios.get(`${baseURL}account/role/`);
-                if (response.data.status === "success") {
-                    setRoles(response.data.data);
-                }
-            } catch (error) {
-                console.error("Error fetching roles:", error);
-            } finally {
-                setRoleLoading(false);
-            }
-        };
-        fetchRoles();
-    }, []);
+    const { rolesList } = useSelector((state) => state.history);
 
-    const onSubmit = (data) => {
-        onUserCreated(data);
-        reset();
-        toggle();
+    const onSubmit = async (formData) => {
+        try {
+            if (formType == "create") {
+                setLoader(true);
+                const isSuccess = await onUserCreated(formData);
+                setLoader(false);
+                if (isSuccess && closeOnSuccess) {
+                    reset();
+                    toggle();
+                }
+            } else if (formType == "edit") {
+                // axios.put(`${authEndPoints.update_user}${data?.id}/`, formData).then((response) => {
+                //     reset();
+                //     toggle();
+                // })
+
+                setLoader(true);
+                const isSuccess = await onUserEdit(formData, data?.id);
+                setLoader(false);
+                if (isSuccess && closeOnSuccess) {
+                    reset();
+                    toggle();
+                }
+                
+            } else {
+                alert("Please resubmit your form again")
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
+    useEffect(() => {
+        if (data) {
+            setValue('email', data.email);
+            setValue('first_name', data.first_name);
+            setValue('last_name', data.last_name);
+            setValue('user_role', data.user_role.id);
+            setValue('process_type', data.process_type);
+        }
+    }, [data, setValue]);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
@@ -66,7 +87,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                         >
                             <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title as="div" className="flex items-center justify-between bg-blue-500 text-white p-4">
-                                    <h3 className="text-lg font-medium">Create User</h3>
+                                    <h3 className="text-lg font-medium">{formType == "edit" ? "Edit User" : "Create User"}</h3>
                                     <CloseSquare size={24} color="white" className="cursor-pointer" onClick={toggle} />
                                 </Dialog.Title>
                                 <div className="bg-gray-200/70">
@@ -77,7 +98,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                     <label className={labelClass}>Email Address*</label>
                                                     <input
                                                         type="email"
-                                                        disabled={props?.button === 'edit'}
+                                                        disabled={formType === 'edit'}
                                                         placeholder="Email Address"
                                                         className={`${inputClass} ${props?.button === 'edit' ? 'text-gray-300' : ''}`}
                                                         {...register('email', { required: true })}
@@ -119,7 +140,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                             <option value="" disabled>
                                                                 {roleLoading ? "Loading Roles..." : "-- Select Role --"}
                                                             </option>
-                                                            {roles.map((role) => (
+                                                            {rolesList.map((role) => (
                                                                 <option key={role.id} value={role.id}>
                                                                     {role.name}
                                                                 </option>
@@ -148,7 +169,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                         {errors.selectOption && <p className="text-red-500 text-xs">{errors.selectOption.message}</p>}
                                                     </div>
                                                 </div>
-                                                <div>
+                                                {formType == "create" && <div>
                                                     <label className={labelClass}>Password*</label>
                                                     <div className="mt-1 relative flex items-center">
                                                         <input
@@ -157,7 +178,13 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                             placeholder="Password"
                                                             type={!eyeIcon ? "password" : "text"}
                                                             className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
-                                                            {...register('password', { required: true })}
+                                                            {...register("password", {
+                                                                required: "Password is required",
+                                                                pattern: {
+                                                                    value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                                                    message: "Password must have at least one uppercase letter, one number, and one special character."
+                                                                }
+                                                            })}
                                                         />
                                                         <span className="absolute right-2 z-10 bg-neutral-100" onClick={() => setEyeIcon(!eyeIcon)}>
                                                             {eyeIcon ? (
@@ -167,7 +194,8 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
                                                             )}
                                                         </span>
                                                     </div>
-                                                </div>
+                                                    {errors.password && <Error title={errors.password.message} />}
+                                                </div>}
                                             </div>
                                         </div>
                                         <footer className="py-2 flex bg-white justify-end px-4 space-x-3">

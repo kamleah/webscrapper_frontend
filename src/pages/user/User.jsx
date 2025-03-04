@@ -10,26 +10,54 @@ import CreateUserModal from "../../components/createUser/createUser";
 import ViewDetailsModal from "../../components/Modals/viewUserModal/viewUserModal";
 import { setLoggedUser } from "../../redux/userSlice/userSlice";
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
+import { toast } from "react-toastify";
+import { setUsersRoleList } from "../../redux/historySlice/historySlice";
+import { baseURL } from "../../constants";
+import Pagination from "../../components/pagination/pagination";
+import usePaginatedData from "../../utils/usePaginatedData";
+import { authEndPoints } from "../../endPoints/AuthEndPoint";
+import DeleteModal from "../../components/Modals/DeleteModal/DeleteModal";
+
 
 const User = () => {
     const dispatch = useDispatch();
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
-    const [users, setUsers] = useState([])
     const [isViewUserModalOpen, setViewUserModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [formType, setFromType] = useState("create");
+    const [userDataToEdit, setUserDataToEdit] = useState();
+    const [open, setOpen] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [cantDelete, setCantDelete] = useState(false);
+    const [usersList, setUsersList] = useState([]);
 
-   useEffect(() => {
-    const UserList = async () => {
+    const filterFunction = async (params) => {
         try {
-            const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
-            setUsers(response.data.results)
+            const response = await axios.get(configurationEndPoints.user_list, { params });
+            return response.data;
         } catch (error) {
-            console.log("Error fetching users:", error);
+            throw error;
         }
     };
-    UserList();
-   }, [dispatch]);
+
+    const {
+        filterData: users,
+        pageNo,
+        pageSize,
+        totalPages,
+        nextIsValid,
+        prevIsValid,
+        pageChangeHandler,
+        fetchData,
+    } = usePaginatedData(1, 10, filterFunction, {});
+    useEffect(() => {
+        setUsersList(users || []);
+    }, [users]);
+
+    useEffect(() => {
+        fetchData({ page: pageNo, page_size: pageSize });
+    }, [pageNo, pageSize]);
 
     const userFields = [
         { label: "Email", key: "email" },
@@ -45,6 +73,8 @@ const User = () => {
     };
 
     const openCreateModal = () => {
+        setUserDataToEdit(null);
+        setFromType("create");
         setCreateModalOpen(true);
     };
 
@@ -57,22 +87,85 @@ const User = () => {
         setViewUserModalOpen(false);
     };
 
-    const handleUserCreated = (newUser) => {
+    const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
-            axios.post(configurationEndPoints.user_resgistration, newUser).then((response)=>{
-                console.log(response.data);
-            }).catch((error)=>{
-                console.log(error);
-            })
+            const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
+            toast.success("User created successfully!");
+            await fetchData({ page: pageNo, page_size: pageSize });
+            return true;
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            const serverResponse = error.response?.data;
+
+            if (serverResponse?.errors) {
+                const errorMessages = Object.values(serverResponse.errors)
+                    .flat()
+                    .join(", ");
+                toast.error(errorMessages);
+            } else {
+                toast.error(serverResponse?.message || "Failed to create user. Please try again.");
+            }
+            return false;
+        }
+    };
+    const handleUserEdit = async (formData, userId) => {
+        formData.user_created_by = loggedUserDetails?.id;
+        try {
+            const response = await axios.put(`${authEndPoints.update_user}${userId}/`, formData);
+            toast.success("User updated successfully!");
+            setUsersList(prev => prev.map(user => 
+                user.id === userId ? { ...user, ...formData, user_role: { ...user.user_role, id: formData.user_role } } : user
+            ));
+            return true;
+        } catch (error) {
+            console.error(error);
+            const serverResponse = error.response?.data;
+            if (serverResponse?.errors) {
+                const errorMessages = Object.values(serverResponse.errors)
+                    .flat()
+                    .join(", ");
+                toast.error(errorMessages);
+            } else {
+                toast.error(serverResponse?.message || "Failed to update user. Please try again.");
+            }
+            return false;
         }
     };
 
-    const handleDelete = (id) => {
-        const updatedUsers = users.filter((user) => user.id !== id);
-        dispatch(setLoggedUser(updatedUsers));
+    const handleDelete = async (id) => {
+        try {
+            if (loggedUserDetails.id === id) {
+                alert("Action not allowed: You cannot delete your own account.");
+                return;
+            }
+            await axios.delete(`${authEndPoints.update_user}${id}/`);
+            setUsersList(prev => prev.filter(user => user.id !== id));
+            toast.success("User deleted successfully!");
+        } catch (error) {
+            console.error("Delete error:", error);
+            toast.error("Failed to delete user. Please try again.");
+        }
+    };
+
+    const handleEdit = (data) => {
+        setUserDataToEdit(data);
+        setFromType("edit");
+        setCreateModalOpen(true);
+    };
+
+    const toggleModalBtn = (id) => {
+        if (loggedUserDetails.id === id) {
+            setCantDelete(true);
+            return;
+        }
+        setOpen(!open);
+        setDelId(id);
+    };
+
+    const deleteData = () => {
+        handleDelete(delId);
+        setOpen(false);
     };
 
     const actionBodyTemplate = (row) => (
@@ -83,17 +176,17 @@ const User = () => {
             >
                 <Eye size="20" className="text-blue-500" />
             </button>
-            {/* <EditCreateButton
+            <EditCreateButton
                 title="Edit User"
                 buttonType="edit"
-                toggle={() => console.log("Edit user:", row)}
-            /> */}
-            {/* <button
-                onClick={() => handleDelete(row.id)}
+                toggle={() => handleEdit(row)}
+            />
+            <button
+                onClick={() => toggleModalBtn(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
             >
                 <Trash size="20" className="text-red-500" />
-            </button> */}
+            </button>
         </div>
     );
 
@@ -104,18 +197,47 @@ const User = () => {
         { field: "user_role?.name", header: "Role", body: (row) => <h6>{row?.user_role?.name || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
+
+    const fetchRoles = async () => {
+        try {
+            const response = await axios.get(`${baseURL}account/role/`);
+            if (response.data.status === "success") {
+                dispatch(setUsersRoleList(response.data.data));
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+        }
+    };
+
+    const handleCantDelete = () => setCantDelete(false);
+
+    useEffect(() => {
+        fetchRoles();
+    }, []);
+
     return (
         <div className="bg-white rounded-xl m-4 sm:m-5 shadow-sm p-5 sm:p-7">
             <div className="flex justify-between flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 mb-6">
                 <SectionHeader title="User" subtitle="List of Users" />
                 <EditCreateButton title="Create User" buttonType="create" toggle={openCreateModal} />
             </div>
-            <Table data={users || []} columns={columns} />
+            <Table data={usersList} columns={columns} />
+            <Pagination 
+                currentPage={pageNo} 
+                totalPages={totalPages} 
+                onPageChange={(page) => {
+                    pageChangeHandler(page);
+                    fetchData({ page, page_size: pageSize });
+                }}
+            />
             {isCreateModalOpen && (
                 <CreateUserModal
                     isOpen={isCreateModalOpen}
                     toggle={closeCreateModal}
                     onUserCreated={handleUserCreated}
+                    onUserEdit={handleUserEdit}
+                    formType={formType}
+                    data={userDataToEdit}
                 />
             )}
             <ViewDetailsModal
@@ -125,6 +247,20 @@ const User = () => {
                 fields={userFields}
                 data={selectedUser}
             />
+            <DeleteModal
+                title="Delete User"
+                deleteBtn={deleteData}
+                toggleModalBtn={toggleModalBtn}
+                description="Are you sure you want to delete this user?"
+                open={open}
+            />
+            <DeleteModal
+                title="Action Not Allowed"
+                toggleModalBtn={handleCantDelete}
+                description="You cannot delete your own account. Please contact an administrator if you need assistance."
+                open={cantDelete}
+            />
+        
         </div>
     );
 };
