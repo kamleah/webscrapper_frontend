@@ -10,12 +10,12 @@ import LoadBox from "../Loader/LoadBox";
 import { baseURL } from "../../constants";
 
 export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess = true, toggle, props = {} }) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
     const [loader, setLoader] = useState(false);
     const [eyeIcon, setEyeIcon] = useState(false);
     const [roles, setRoles] = useState([]);
     const [roleLoading, setRoleLoading] = useState(false);
-    
+
     useEffect(() => {
         const fetchRoles = async () => {
             try {
@@ -23,6 +23,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
                 const response = await axios.get(`${baseURL}account/role/`);
                 if (response.data.status === "success") {
                     setRoles(response.data.data);
+                    setValue("user_role", response.data.data[0].id)
                 }
             } catch (error) {
                 console.error("Error fetching roles:", error);
@@ -161,7 +162,13 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
                                                             placeholder="Password"
                                                             type={!eyeIcon ? "password" : "text"}
                                                             className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
-                                                            {...register('password', { required: true })}
+                                                            {...register("password", {
+                                                                required: "Password is required",
+                                                                pattern: {
+                                                                    value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                                                                    message: "Password must have at least one uppercase letter, one number, and one special character."
+                                                                }
+                                                            })}
                                                         />
                                                         <span className="absolute right-2 z-10 bg-neutral-100" onClick={() => setEyeIcon(!eyeIcon)}>
                                                             {eyeIcon ? (
@@ -171,6 +178,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
                                                             )}
                                                         </span>
                                                     </div>
+                                                    {errors.password && <Error title={errors.password.message} />}
                                                 </div>
                                             </div>
                                         </div>
