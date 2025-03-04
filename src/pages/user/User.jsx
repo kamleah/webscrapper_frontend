@@ -260,6 +260,7 @@ const User = () => {
                 description="You cannot delete your own account. Please contact an administrator if you need assistance."
                 open={cantDelete}
             />
+        
         </div>
     );
 };

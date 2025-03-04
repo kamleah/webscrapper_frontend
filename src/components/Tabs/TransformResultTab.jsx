@@ -10,9 +10,6 @@ import { setTransformedContentResult } from '../../redux/historySlice/historySli
 
 const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id, setLoading }) => {
     const { transformedContentResult, transformedContentId } = useSelector((state) => state.history);
-    console.log("transformedContentResult", transformedContentResult);
-    console.log("transformedContentId", transformedContentId);
-    console.log("scraped_id", scraped_id);
 
     const [selectedTags, setSelectedTags] = useState(['name', 'price']);
     const dispatch = useDispatch();
