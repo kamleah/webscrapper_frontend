@@ -9,7 +9,7 @@ import Error from "../Errors/Error";
 import LoadBox from "../Loader/LoadBox";
 import { baseURL } from "../../constants";
 
-export default function CreateUserModal({ isOpen, onUserCreated, toggle, props = {} }) {
+export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess = true, toggle, props = {} }) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [loader, setLoader] = useState(false);
     const [eyeIcon, setEyeIcon] = useState(false);
@@ -32,11 +32,15 @@ export default function CreateUserModal({ isOpen, onUserCreated, toggle, props =
         };
         fetchRoles();
     }, []);
+    const onSubmit = async (data) => {
+        setLoader(true);
+        const isSuccess = await onUserCreated(data);
+        setLoader(false);
 
-    const onSubmit = (data) => {
-        onUserCreated(data);
-        reset();
-        toggle();
+        if (isSuccess && closeOnSuccess) {
+            reset();
+            toggle();
+        }
     };
 
     return (
