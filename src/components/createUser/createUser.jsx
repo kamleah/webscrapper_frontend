@@ -11,7 +11,7 @@ import { baseURL } from "../../constants";
 import { useSelector } from "react-redux";
 import { authEndPoints } from "../../endPoints/AuthEndPoint";
 
-export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess = true, toggle, props = {}, formType, data }) {
+export default function CreateUserModal({ isOpen, onUserCreated,onUserEdit, closeOnSuccess = true, toggle, props = {}, formType, data }) {
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
     const [loader, setLoader] = useState(false);
     const [eyeIcon, setEyeIcon] = useState(false);
@@ -19,35 +19,9 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
     const [roleLoading, setRoleLoading] = useState(false);
     const { rolesList } = useSelector((state) => state.history);
 
-    // const onSubmit = async (formData) => {
-    //     try {
-    //         if (formType == "create") {
-    //             setLoader(true);
-    //             const isSuccess = await onUserCreated(formData);
-    //             setLoader(false);
-    //             if (isSuccess && closeOnSuccess) {
-    //                 reset();
-    //                 toggle();
-    //             }
-    //         } else if (formType == "edit") {
-    //             axios.put(`${authEndPoints.update_user}${data?.id}/`, formData).then((response) => {
-    //                 reset();
-    //                 toggle();
-    //             })
-                
-    //         } else {
-    //             alert("Please resubmit your form again")
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-
-
-
     const onSubmit = async (formData) => {
         try {
-            if (formType === "create") {
+            if (formType == "create") {
                 setLoader(true);
                 const isSuccess = await onUserCreated(formData);
                 setLoader(false);
@@ -55,22 +29,27 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
                     reset();
                     toggle();
                 }
-            } else if (formType === "edit") {
+            } else if (formType == "edit") {
+                // axios.put(`${authEndPoints.update_user}${data?.id}/`, formData).then((response) => {
+                //     reset();
+                //     toggle();
+                // })
+
                 setLoader(true);
-                const response = await axios.put(`${authEndPoints.update_user}${data?.id}/`, formData);
+                const isSuccess = await onUserEdit(formData, data?.id);
                 setLoader(false);
-                await onUserCreated(response.data); // Pass updated data back to parent
-                reset();
-                toggle();
+                if (isSuccess && closeOnSuccess) {
+                    reset();
+                    toggle();
+                }
+                
             } else {
-                alert("Please resubmit your form again");
+                alert("Please resubmit your form again")
             }
         } catch (error) {
             console.log(error);
-            setLoader(false);
         }
     };
-    
     useEffect(() => {
         if (data) {
             setValue('email', data.email);
@@ -79,7 +58,7 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
             setValue('user_role', data.user_role.id);
             setValue('process_type', data.process_type);
         }
-    }, [data]);
+    }, [data, setValue]);
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
