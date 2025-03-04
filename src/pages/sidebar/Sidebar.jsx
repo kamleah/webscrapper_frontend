@@ -10,7 +10,10 @@ const Sidebar = ({ children }) => {
   const [isActiveLink, setIsActiveLink] = useState(false);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const dispatch = useDispatch()
-
+  const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
+  const filtered = DashboardRouter.filter((routes)=> routes.title != "User")
+  const removedArray = loggedUserDetails.user_role.name == "Employee" ? filtered : DashboardRouter
+  
   return (
     <>
       <div className="w-full h-screen  flex ">
@@ -33,7 +36,7 @@ const Sidebar = ({ children }) => {
             </div>
             {/* {(user?.role == "SUPER_ADMIN" || user?.role == "ADMIN") && */}
             <ul className='flex  items-center flex-col overflow-y-scroll h-full  my-4 mb-20 space-y-1 scroll-hide'>
-              {DashboardRouter?.map((item, i) => {
+              {removedArray?.map((item, i) => {
                 return <SidebarLink
                   i={i}
                   key={i}

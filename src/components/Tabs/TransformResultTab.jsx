@@ -3,9 +3,18 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
 import EditCreateButton from '../Button/EditCreateButton';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
+import { setTransformedContentResult } from '../../redux/historySlice/historySlice';
 
-const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
+const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id, setLoading }) => {
+    const { transformedContentResult, transformedContentId } = useSelector((state) => state.history);
+    console.log("transformedContentResult", transformedContentResult);
+    console.log("transformedContentId", transformedContentId);
+    console.log("scraped_id", scraped_id);
+
+    const [selectedTags, setSelectedTags] = useState(['name', 'price']);
     const dispatch = useDispatch();
     const [accordionIndex, setAccordionIndex] = useState(null);
 
@@ -13,121 +22,237 @@ const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
         setAccordionIndex(accordionIndex === index ? null : index);
     };
 
-    function extractDynamicData() {
-        const data = {};
-
-        // Extract all headings and their next elements
-        document.querySelectorAll("strong").forEach((strongTag) => {
-            const key = strongTag.innerText.replace(":", "").trim().toLowerCase().replace(/\s+/g, "_"); // Normalize key
-            let value = strongTag.parentElement.innerText.replace(strongTag.innerText, "").trim(); // Get value
-
-            // Check if the next element is a list (<ul>)
-            let nextElement = strongTag.parentElement.nextElementSibling;
-            if (nextElement && nextElement.tagName === "UL") {
-                value = Array.from(nextElement.querySelectorAll("li")).map(li => li.innerText.trim()); // Extract list items
-            }
-
-            data[key] = value; // Store in JSON object
-        });
-
-        // Extract Language and Name (they are outside <strong> tags)
-        const languageElement = document.querySelector("h5.text-blue-600");
-        if (languageElement) data.language = languageElement.innerText.trim();
-
-        const nameElement = document.querySelector("h6.text-gray-600");
-        if (nameElement) data.name = nameElement.innerText.trim();
-        const output = JSON.stringify(data, null, 4);
-        console.log(output);
-
-
-        // return JSON.stringify(data, null, 4);
+     // Function to convert JSON to CSV format
+     const convertToCSV_V2 = (jsonArray) => {
+        const headers = Object.keys(jsonArray[0]).join(",");
+        const rows = jsonArray.map((obj) =>
+            Object.values(obj)
+                .map((val) => `"${val}"`)
+                .join(",")
+        );
+        return [headers, ...rows].join("\n");
     };
 
-    const parseMarkdownToJson = (markdown) => {
-        // const data = {};
-        // const lines = markdown.split("\n");
-        const lines = markdown
-        console.log("lines--->", lines);
+    const downloadCSV_V2 = (jsonData) => {
+        const csvData = convertToCSV_V2(jsonData);
+        const blob = new Blob([csvData], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
 
-        let currentKey = null; // Track the active key
-        let listMode = false;  // Track if we are in a list
+        // Generate filename with current date & time
+        const now = new Date();
+        const formattedDate = now
+            .toISOString()
+            .replace(/T/, "_") // Replace 'T' with '_'
+            .replace(/:/g, "-") // Replace colons with dashes
+            .split(".")[0]; // Remove milliseconds
+        const fileName = `Scrapped_Content_${formattedDate}.csv`;
 
-        lines.forEach(line => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
 
-            // Match "**Key:** Value" pattern (bolded headings)
-            const keyValueMatch = line.match(/\*\*(.*?)\*\*:\s*(.+)/);
+    const downloadAction = (contentId) => {
+        setLoading(true);
+        if (transformedContentResult.length > 0) {
+            console.log(transformedContentResult);
+            downloadCSV_V2(transformedContentResult)
+            // downloadInExcel({ user_scrap_history: transformedContentResult });
+            setLoading(false);
+        } else {
+            try {
+                axios.get(`${configurationEndPoints.translation_result_json}${contentId}/`).then((response) => {
+                    const payload = {
+                        result: response.data.data,
+                        id: contentId
+                    };
+                    dispatch(setTransformedContentResult(payload));
+                    // downloadInExcel({ user_scrap_history: payload.result });
+                    downloadCSV_V2(payload.result)
+                    setLoading(false);
+                }).catch((error) => {
+                    console.log(error);
+                    setLoading(false);
+                })
+            } catch (error) {
+                console.log(error);
+                setLoading(false);
+            };
+        }
+    };
 
-            if (keyValueMatch) {
-                currentKey = keyValueMatch[1].toLowerCase().replace(/\s+/g, "_"); // Convert to snake_case
-                data[currentKey] = keyValueMatch[2].trim();
-                listMode = false; // Reset list mode
+    const convertToCSV = (productArray) => {
+        let headers = new Set();
+        let rows = [];
+        productArray.forEach(product => {
+            console.log(product);
+
+            const productName = Object.keys(product)[0];
+            console.log("productName-->", productName);
+
+
+            const productDetails = product[productName];
+            console.log("productDetails-->", productDetails);
+            let row = { Name: productName, ...productDetails };
+            Object.keys(row).forEach(key => headers.add(key));
+            rows.push(row);
+        });
+
+        headers = Array.from(headers);
+
+        const newTags = selectedTags.join(', ');
+        const newHEaders = findMatchingWords(headers, newTags);
+
+        let csvContent = newHEaders.join(",") + "\n";
+        rows.forEach(row => {
+            console.log("row", row);
+            let rowData = newHEaders.map(header => `"${row[header] || ''}"`).join(",");
+            csvContent += rowData + "\n";
+        });
+
+        return csvContent;
+    };
+
+    const downloadCSV = (productArray) => {
+        const content_json_array = [];
+        console.log("productArray", productArray);
+        productArray.map((content) => {
+            if (content.content_json.product) {
+                content_json_array.push({ [transformedContentResult[0].name]: content.content_json.product })
+            } else {
+                content_json_array.push({ [transformedContentResult[0].name]: content.content_json })
             }
-            // Match list items (e.g., "- Benefit 1")
-            else if (line.match(/^-\s(.+)/)) {
-                if (currentKey) {
-                    if (!Array.isArray(data[currentKey])) {
-                        data[currentKey] = []; // Convert to an array for list items
+        });
+
+        const csvContent = convertToCSV(content_json_array);
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "products.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    function findMatchingWords(array, spanishDescription) {
+        console.log(array);
+        console.log((spanishDescription));
+
+        // Convert the description to lowercase for case-insensitive comparison
+        const descriptionWords = spanishDescription.toLowerCase().split(/[\s,]+/); // Split by space and comma
+
+        // Filter the array to find words present in the description
+        const matchingWords = array.filter(word =>
+            descriptionWords.some(descWord => word.toLowerCase().includes(descWord))
+        );
+
+        return matchingWords;
+    };
+
+    const getUniqueKeysWithLanguage = (rowData) => {
+        const keysSet = new Set();
+
+        rowData.forEach(item => {
+            const languagePrefix = item.language.toLowerCase(); // Convert to lowercase for consistency
+            Object.keys(item.content_json).forEach(key => {
+                keysSet.add(`${languagePrefix}_${key}`); // Prefix keys with language
+            });
+        });
+
+        return Array.from(keysSet);
+    };
+
+    const transformDataForCSV = (rowData) => {
+        const transformedItem = {}; // Single row object
+
+        rowData.forEach(item => {
+            const languagePrefix = item.language.toLowerCase();
+
+            if (item.content_json && Object.keys(item.content_json).length > 0) {
+                Object.keys(item.content_json).forEach(key => {
+                    let value = item.content_json[key];
+
+                    // Handle arrays by joining them with a comma
+                    if (Array.isArray(value)) {
+                        value = value.map(v =>
+                            typeof v === "object" ? JSON.stringify(v) : v
+                        ).join(", ");
                     }
-                    data[currentKey].push(line.replace(/^- /, "").trim());
-                }
-            }
-            // Handle multi-line descriptions or additional text
-            else if (currentKey && line.trim() !== "") {
-                if (Array.isArray(data[currentKey])) {
-                    data[currentKey].push(line.trim()); // Append to array if it's a list
-                } else {
-                    data[currentKey] += " " + line.trim(); // Append additional text to string
-                }
+
+                    // Handle objects by converting them into key-value pairs
+                    else if (typeof value === "object" && value !== null) {
+                        value = Object.entries(value)
+                            .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
+                            .join(" | ");
+                    }
+
+                    // Store in the single row object
+                    transformedItem[`${languagePrefix}_${key}`] = value;
+                });
             }
         });
 
-        console.log("data====>", data);
-
-
-        // return data;
+        return [transformedItem]; // Return as an array containing a single object (one row)
     };
 
-    const testingData = [
-        "**TATCHA The Dewy Skin Cream 10ml**",
-        "",
-        "**Precio:** £24.00",
-        "",
-        "**Descripción:** ",
-        "Lo que es: Una rica crema que alimenta la piel con hidratación voluminosa y arroz morado japonés lleno de antioxidantes para un brillo saludable y húmedo.",
-        "",
-        "**Tipo de piel:** Normal y seca",
-        "",
-        "**Preocupaciones de cuidado de la piel:** Sequedad, opacidad y textura desigual, y pérdida de firmeza y elasticidad",
-        "",
-        "**Formulación:** Crema rica",
-        "",
-        "**Ingredientes destacados:**",
-        "- **Arroz morado japonés:** Lleno de nutrientes y conocido por su capacidad para sobrevivir en cualquier entorno adverso, se ha utilizado durante mucho tiempo para celebrar la longevidad y la vitalidad; rico en antocianinas, un potente antioxidante, ayuda a la piel a recuperarse y protegerse del estrés, la contaminación y el daño UV para una apariencia de piel más saludable.",
-        "- **Mezcla de algas de Okinawa y ácido hialurónico:** Captura agua para ayudar a reponer el reservorio de humedad natural de la piel, dejando inmediatamente la piel suave, reconfortada y profundamente nutrida; ayuda a reponer ceramidas para garantizar una función óptima de la barrera cutánea, contribuyendo a la reducción de la pérdida de humedad futura, para una piel visiblemente suave y llena de hidratación.",
-        "- **Extractos botánicos:** De ginseng, tomillo silvestre y mejorana dulce; nutre la piel, mejorando su capacidad natural para retener y liberar humedad según sea necesario, e imparte un brillo húmedo.",
-        "",
-        "**Llamadas de ingredientes:** Este producto es libre de crueldad y sin gluten.",
-        "",
-        "**Lo que también necesitas saber:** Esta crema hidrata intensamente y sella la humedad, ayudando a reponer ceramidas para un rebote saludable y luminosidad instantánea. Una fermentación de superalimentos japoneses anti-envejecimiento: té verde, arroz y algas, ayuda a que la piel luzca su mejor aspecto a cualquier edad.",
-        "",
-        "**Instrucciones:** ",
-        "Saca una cantidad del tamaño de una perla de crema con la cuchara dorada. Masajea sobre la cara, el cuello y el escote en movimientos ascendentes. Usar diariamente, mañana y noche.",
-        "",
-        "**Ingredientes:**",
-        "ARROZ MORADO JAPONES: LLENO DE NUTRIENTES Y RICO EN ANTOCIANINAS, UN FUERTE ANTIOXIDANTE, ESTE GRAIN PROFUNDAMENTE TONIFICADO AYUDA A REPLENAR LA HIDRATACIÓN ESENCIAL PARA DESVELAR UN BRILLO SALUDABLE.",
-        "EXTRACTOS BOTÁNICOS Y SQUALANE: UNA MEZCLA DE EXTRACTOS BOTÁNICOS, INCLUYENDO GINSENG, TOMILLO SILVESTRE Y MEJORANA DULCE MÁS SQUALANE, AYUDA A HIDRATAR Y DEJAR LA PIEL CON UN BRILLO HUMEDO.",
-        "HADASEI-3: NUESTRO COMPLEJO PROPIETARIO DE ARROZ AKITA DOBLEMENTE FERMENTADO, TÉ VERDE UJI Y ALGAS OKINAWA. ESTOS INGREDIENTES TRABAJAN EN ARMONÍA PARA DESVELAR UNA PIEL RADIANTE Y SALUDABLE. CON AMINOÁCIDOS ESENCIALES, APOYA LOS FACTORES DE RETENCIÓN DE HUMEDAD DE LA PIEL PARA UN TEZ BELLA.",
-        "",
-        "---",
-        "",
-        ""
-    ]
+    const generateCSVFile = (headers, rowData) => {
+        let csvContent = headers.join(",") + "\n"; // Add header row
+
+        rowData.forEach(historyData => {
+            const row = headers.map(header => {
+                let value = historyData[header] || ""; // Get value or empty string if undefined
+                return Array.isArray(value) ? `"${value.join("; ")}"` : `"${value}"`; // Handle arrays properly
+            });
+            csvContent += row.join(",") + "\n"; // Add row data
+        });
+
+        return csvContent;
+    };
+
+    const downloadCSV2 = (csvContent, filename) => {
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const downloadInExcel = (rowData) => {
+        console.log("rowData", rowData);
+        setLoading(true);
+        try {
+            if (rowData.user_scrap_history.length > 0) {
+                if (Object.keys(rowData.user_scrap_history[0].content_json).length === 0) {
+                    alert("Scrapped JSON is not generated");
+                    setLoading(false);
+                } else {
+                    const headers = getUniqueKeysWithLanguage(rowData.user_scrap_history);
+                    const transformedData = transformDataForCSV(rowData.user_scrap_history, headers);
+                    console.log(transformedData);
+                    const csvData = generateCSVFile(headers, transformedData);
+                    downloadCSV2(csvData, "Scrapped_Data.csv");
+                    setLoading(false);
+                }
+            } else {
+                alert("Scrapped JSON is not generated");
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="my-4 space-y-4">
             <div className="flex justify-end">
-                <EditCreateButton title="Download" buttonType="create" />
-                <button onClick={() => handleResetProcess()} className="bg-red-500 hover:bg-red-700  text-white px-6 py-2 rounded-md">
+                <EditCreateButton title="Download" buttonType="create" toggle={() => downloadAction(scraped_id)} />
+                <button onClick={() => handleResetProcess()} className="bg-red-500 hover:bg-red-700  text-white px-6 py-2 rounded-md ml-1">
                     Reset Process
                 </button>
             </div>
@@ -138,7 +263,7 @@ const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
                 >
                     <div
                         key={index}
-                        className="border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-1"
+                        className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"
                     >
                         <div
                             onClick={() => toggleAccordion(index)}
@@ -168,16 +293,6 @@ const TransformResultTab = ({ transformedContent, handleResetProcess }) => {
                                 <Markdown>{content?.content}</Markdown>
                             </p>
                         </div>
-                    </div>
-                    <div
-                        className={`transition-all duration-300 ease-in-out ${accordionIndex === index
-                            ? "max-h-[300px] p-4 bg-white overflow-y-auto"
-                            : "max-h-0 overflow-hidden"
-                            }`}
-                    >
-                        <p className="text-sm text-gray-700">
-                            <Markdown>{content.content}</Markdown>
-                        </p>
                     </div>
                 </div>
             ))}

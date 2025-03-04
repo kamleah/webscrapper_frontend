@@ -7,13 +7,13 @@ import TransformTabs from "../../components/Tabs/TransformTabs";
 import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
-import { resetProcess, setTransformedContent } from "../../redux/historySlice/historySlice";
+import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
 
 const Scrapping = () => {
     const dispatch = useDispatch();
-    const { tabAccess, tabProcessStarted, userURLS, transformedContent } = useSelector((state) => state.history);
+    const { tabAccess, scrappedData, tabProcessStarted, userURLS, transformedContent, scrapId } = useSelector((state) => state.history);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [scrappedData, setScrappedData] = useState();
+    // const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
     const tabStyle = 'p-3 cursor-pointer font-tbPop font-medium';
     const activeTabStyle = 'text-blue-500 border-b-2 border-blue-400 outline-0';
@@ -22,7 +22,23 @@ const Scrapping = () => {
 
     const handleResponseRecieved = (response) => {
         try {
-            setScrappedData(response);
+            console.log("response", response);
+            // Make sure the data exists before dispatching
+            if (response && response.scraped_data) {
+                dispatch(setScrappedData(response.scraped_data));
+                dispatch(setScrappedId(response.scraped_id));
+            }
+
+            // Make sure the ID exists before dispatching
+            if (response && response.scraped_id) {
+                try {
+                    console.log("inside dispatch");
+                    
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
             setSelectedTab(1);
         } catch (error) {
             console.log(error);
@@ -41,7 +57,7 @@ const Scrapping = () => {
     const handleTebSelected = (index) => {
         try {
             const hasAccessTab = tabAccess.find(tab => tab.index === index);
-            if (hasAccessTab.access) {
+            if (hasAccessTab?.access) {
                 setSelectedTab(index);
             };
         } catch (error) {
@@ -74,11 +90,11 @@ const Scrapping = () => {
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrappedData?.scraped_id} handleContentTransformed={handleContentTransformed} setLoading={setLoading} />
+                    <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrapId} handleContentTransformed={handleContentTransformed} setLoading={setLoading} />
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrappedData?.scraped_id} handleResetProcess={handleResetProcess} />
+                    <TransformResultTab transformedContent={transformedContent} scraped_id={scrapId} handleResetProcess={handleResetProcess} setLoading={setLoading} />
                 </TabPanel>
             </Tabs>
 

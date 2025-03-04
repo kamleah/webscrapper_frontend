@@ -5,4 +5,8 @@ export const configurationEndPoints = {
     translate_content: `${baseURL}scrap/translate-content/`,
     user_resgistration: `${baseURL}account/registration/`,
     user_list: `${baseURL}account/users-list/`,
+    user_scrap_filter: `${baseURL}scrap/user-scrap-filter/`,
+    translation_result_json: `${baseURL}scrap/translations-results/`,
+    delete_history: `${baseURL}scrap/delete-history/`,
+    download_scrap: `${baseURL}scrap/download-scrap/`
 };

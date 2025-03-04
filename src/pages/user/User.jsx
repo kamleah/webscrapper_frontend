@@ -36,6 +36,7 @@ const User = () => {
         { label: "First Name", key: "first_name" },
         { label: "Last Name", key: "last_name" },
         { label: "Role", key: "user_role.name" },
+        { label: "Process Type", key: "process_type" },
     ];
 
     const openViewUserModal = (user) => {
@@ -82,17 +83,17 @@ const User = () => {
             >
                 <Eye size="20" className="text-blue-500" />
             </button>
-            <EditCreateButton
+            {/* <EditCreateButton
                 title="Edit User"
                 buttonType="edit"
                 toggle={() => console.log("Edit user:", row)}
-            />
-            <button
+            /> */}
+            {/* <button
                 onClick={() => handleDelete(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
             >
                 <Trash size="20" className="text-red-500" />
-            </button>
+            </button> */}
         </div>
     );
 
