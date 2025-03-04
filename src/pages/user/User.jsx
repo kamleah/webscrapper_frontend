@@ -30,7 +30,8 @@ const User = () => {
         }
     };
     UserList();
-   }, [dispatch]);
+   }, []);
+   
 
     const userFields = [
         { label: "Email", key: "email" },
@@ -57,11 +58,15 @@ const User = () => {
         setSelectedUser(null);
         setViewUserModalOpen(false);
     };
+   
     const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
             const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
             toast.success("User created successfully!");
+            const updatedResponse = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
+            setUsers(updatedResponse.data.results);
+    
             return true;
         } catch (error) {
             console.error(error);
@@ -75,11 +80,10 @@ const User = () => {
             } else {
                 toast.error(serverResponse?.message || "Failed to create user. Please try again.");
             }
-            return false; 
+            return false;
         }
     };
     
-
     const handleDelete = (id) => {
         const updatedUsers = users.filter((user) => user.id !== id);
         dispatch(setLoggedUser(updatedUsers));
@@ -98,12 +102,12 @@ const User = () => {
                 buttonType="edit"
                 toggle={() => console.log("Edit user:", row)}
             /> */}
-            {/* <button
+            <button
                 onClick={() => handleDelete(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
             >
                 <Trash size="20" className="text-red-500" />
-            </button> */}
+            </button>
         </div>
     );
 
