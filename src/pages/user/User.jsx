@@ -13,28 +13,37 @@ import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import { toast } from "react-toastify";
 import { setUsersRoleList } from "../../redux/historySlice/historySlice";
 import { baseURL } from "../../constants";
+import Pagination from "../../components/pagination/pagination";
+import usePaginatedData from "../../utils/usePaginatedData";
 
 const User = () => {
     const dispatch = useDispatch();
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
-    const [users, setUsers] = useState([])
     const [isViewUserModalOpen, setViewUserModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [formType, setFromType] = useState("create");
     const [userDataToEdit, setUserDataToEdit] = useState();
 
-    useEffect(() => {
-        const UserList = async () => {
-            try {
-                const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
-                setUsers(response.data.results)
-            } catch (error) {
-                console.log("Error fetching users:", error);
-            }
-        };
-        UserList();
-    }, [dispatch]);
+    const filterFunction = async (params) => {
+        try {
+            const response = await axios.get(configurationEndPoints.user_list, { params });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    };
+    const {
+        filterData: users,
+        pageNo,
+        pageSize,
+        totalPages,
+        nextIsValid,
+        prevIsValid,
+        pageChangeHandler,
+        fetchData,
+    } = usePaginatedData(1, 10, filterFunction, {});
+
 
     const userFields = [
         { label: "Email", key: "email" },
@@ -63,15 +72,13 @@ const User = () => {
         setSelectedUser(null);
         setViewUserModalOpen(false);
     };
-   
+
     const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
             const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
             toast.success("User created successfully!");
-            const updatedResponse = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
-            setUsers(updatedResponse.data.results);
-    
+            await fetchData({ page: pageNo, page_size: pageSize });
             return true;
         } catch (error) {
             console.error(error);
@@ -88,7 +95,6 @@ const User = () => {
             return false;
         }
     };
-
 
     const handleDelete = (id) => {
         const updatedUsers = users.filter((user) => user.id !== id);
@@ -130,7 +136,6 @@ const User = () => {
         { field: "user_role?.name", header: "Role", body: (row) => <h6>{row?.user_role?.name || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
-
     const fetchRoles = async () => {
         try {
             const response = await axios.get(`${baseURL}account/role/`);
@@ -153,6 +158,11 @@ const User = () => {
                 <EditCreateButton title="Create User" buttonType="create" toggle={openCreateModal} />
             </div>
             <Table data={users || []} columns={columns} />
+            <Pagination 
+                currentPage={pageNo} 
+                totalPages={totalPages} 
+                onPageChange={pageChangeHandler}
+            />
             {isCreateModalOpen && (
                 <CreateUserModal
                     isOpen={isCreateModalOpen}

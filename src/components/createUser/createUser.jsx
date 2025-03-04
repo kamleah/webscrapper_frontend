@@ -19,9 +19,35 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
     const [roleLoading, setRoleLoading] = useState(false);
     const { rolesList } = useSelector((state) => state.history);
 
+    // const onSubmit = async (formData) => {
+    //     try {
+    //         if (formType == "create") {
+    //             setLoader(true);
+    //             const isSuccess = await onUserCreated(formData);
+    //             setLoader(false);
+    //             if (isSuccess && closeOnSuccess) {
+    //                 reset();
+    //                 toggle();
+    //             }
+    //         } else if (formType == "edit") {
+    //             axios.put(`${authEndPoints.update_user}${data?.id}/`, formData).then((response) => {
+    //                 reset();
+    //                 toggle();
+    //             })
+                
+    //         } else {
+    //             alert("Please resubmit your form again")
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+
+
+
     const onSubmit = async (formData) => {
         try {
-            if (formType == "create") {
+            if (formType === "create") {
                 setLoader(true);
                 const isSuccess = await onUserCreated(formData);
                 setLoader(false);
@@ -29,19 +55,22 @@ export default function CreateUserModal({ isOpen, onUserCreated, closeOnSuccess 
                     reset();
                     toggle();
                 }
-            } else if (formType == "edit") {
-                axios.put(`${authEndPoints.update_user}${data?.id}/`, formData).then((response) => {
-                    reset();
-                    toggle();
-                })
+            } else if (formType === "edit") {
+                setLoader(true);
+                const response = await axios.put(`${authEndPoints.update_user}${data?.id}/`, formData);
+                setLoader(false);
+                await onUserCreated(response.data); // Pass updated data back to parent
+                reset();
+                toggle();
             } else {
-                alert("Please resubmit your form again")
+                alert("Please resubmit your form again");
             }
         } catch (error) {
             console.log(error);
+            setLoader(false);
         }
     };
-
+    
     useEffect(() => {
         if (data) {
             setValue('email', data.email);
