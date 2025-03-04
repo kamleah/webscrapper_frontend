@@ -10,6 +10,7 @@ import CreateUserModal from "../../components/createUser/createUser";
 import ViewDetailsModal from "../../components/Modals/viewUserModal/viewUserModal";
 import { setLoggedUser } from "../../redux/userSlice/userSlice";
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
+import { toast } from "react-toastify";
 
 const User = () => {
     const dispatch = useDispatch();
@@ -56,19 +57,28 @@ const User = () => {
         setSelectedUser(null);
         setViewUserModalOpen(false);
     };
-
-    const handleUserCreated = (newUser) => {
+    const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
-            axios.post(configurationEndPoints.user_resgistration, newUser).then((response)=>{
-                console.log(response.data);
-            }).catch((error)=>{
-                console.log(error);
-            })
+            const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
+            toast.success("User created successfully!");
+            return true;
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            const serverResponse = error.response?.data;
+    
+            if (serverResponse?.errors) {
+                const errorMessages = Object.values(serverResponse.errors)
+                    .flat()
+                    .join(", ");
+                toast.error(errorMessages);
+            } else {
+                toast.error(serverResponse?.message || "Failed to create user. Please try again.");
+            }
+            return false; 
         }
     };
+    
 
     const handleDelete = (id) => {
         const updatedUsers = users.filter((user) => user.id !== id);
