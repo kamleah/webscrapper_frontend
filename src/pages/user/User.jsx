@@ -24,15 +24,16 @@ const User = () => {
     const [formType, setFromType] = useState("create");
     const [userDataToEdit, setUserDataToEdit] = useState();
 
+    const UserList = async () => {
+        try {
+            const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
+            setUsers(response.data.results)
+        } catch (error) {
+            console.log("Error fetching users:", error);
+        }
+    };
+
     useEffect(() => {
-        const UserList = async () => {
-            try {
-                const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
-                setUsers(response.data.results)
-            } catch (error) {
-                console.log("Error fetching users:", error);
-            }
-        };
         UserList();
     }, [dispatch]);
 
@@ -63,11 +64,15 @@ const User = () => {
         setSelectedUser(null);
         setViewUserModalOpen(false);
     };
+   
     const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
             const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
             toast.success("User created successfully!");
+            const updatedResponse = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
+            setUsers(updatedResponse.data.results);
+    
             return true;
         } catch (error) {
             console.error(error);
@@ -108,14 +113,14 @@ const User = () => {
             <EditCreateButton
                 title="Edit User"
                 buttonType="edit"
-                toggle={() => handleEdit(row)}
+                toggle={() => console.log("Edit user:", row)}
             />
-            {/* <button
+            <button
                 onClick={() => handleDelete(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
             >
                 <Trash size="20" className="text-red-500" />
-            </button> */}
+            </button>
         </div>
     );
 

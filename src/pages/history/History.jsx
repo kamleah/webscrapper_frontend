@@ -42,6 +42,7 @@ const History = () => {
         nextIsValid,
         prevIsValid,
         pageChangeHandler,
+        fetchData,
     } = usePaginatedData(1, 10, fetchHistory);
 
     useEffect(() => {
@@ -57,23 +58,20 @@ const History = () => {
         setSelectedHistory(null);
         setViewHistoryModalOpen(false);
     };
-
-    const deleteHistory = (historyId) => {
+    
+    const deleteHistory = async (historyId) => {
         try {
-            axios.delete(`${configurationEndPoints.delete_history}${historyId}/`).then(async (response) => {
-                const updatedHistory = await fetchHistory({
-                    "page": pageNo,
-                    "page_size": pageSize,
-                });
-                dispatch(setHistory(updatedHistory.results));
-            }).catch((error) => {
-                console.log(error);
-            })
+          await axios.delete(`${configurationEndPoints.delete_history}${historyId}/`);
+          await fetchData({ page: pageNo, page_size: pageSize });
+          const updatedHistory = await fetchHistory({
+            page: pageNo,
+            page_size: pageSize,
+          });
+          dispatch(setHistory(updatedHistory.results));
         } catch (error) {
-            console.log(error);
+          console.log("Error deleting history:", error);
         }
-    };
-
+      };
     const deleteData = () => {
         deleteHistory(delId);
         setOpen(!open);
@@ -88,16 +86,6 @@ const History = () => {
         }
     };
 
-    // const getUniqueKeys = (arr) => {
-    //     const keysSet = new Set();
-
-    //     arr.forEach(obj => {
-    //         Object.keys(obj).forEach(key => keysSet.add(key));
-    //     });
-
-    //     return Array.from(keysSet);
-    // };
-
     const getUniqueKeysWithLanguage = (rowData) => {
         const keysSet = new Set();
 
@@ -110,7 +98,6 @@ const History = () => {
 
         return Array.from(keysSet);
     };
-
     const generateCSVFile = (headers, rowData) => {
         let csvContent = headers.join(",") + "\n"; // Add header row
 
@@ -329,12 +316,12 @@ const History = () => {
             >
                 <ArrowDownToLine size="20" className="text-yellow-500" />
             </button>
-            {/* <button
+            <button
                 onClick={() => toggleModalBtn(row.id)}
                 id={row.id}
                 className="bg-red-100 px-1.5 py-2 rounded-sm">
                 <Trash size="20" className="text-red-500" />
-            </button> */}
+            </button>
         </div>
     );
 
@@ -373,32 +360,6 @@ const History = () => {
                 <SectionHeader title="History" />
             </div>
             <Table data={history} columns={columns} />
-            {/* <div className="flex justify-center items-center mt-5 space-x-2">
-                <button
-                    onClick={() => pageChangeHandler(pageNo - 1)}
-                    disabled={!prevIsValid}
-                    className={`px-3 py-1 rounded-full ${prevIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
-                >
-                    {"<"}
-                </button>
-                {[...Array(totalPages)].map((_, idx) => (
-                    <button
-                        key={idx}
-                        onClick={() => pageChangeHandler(idx + 1)}
-                        className={`px-3 py-1 rounded-full ${idx + 1 === pageNo ? "bg-blue-500 text-white" : "bg-gray-100"
-                            }`}
-                    >
-                        {idx + 1}
-                    </button>
-                ))}
-                <button
-                    onClick={() => pageChangeHandler(pageNo + 1)}
-                    disabled={!nextIsValid}
-                    className={`px-3 py-1 rounded-full ${nextIsValid ? "bg-gray-200" : "bg-gray-100 text-gray-400"}`}
-                >
-                    {">"}
-                </button>
-            </div> */}
             <Pagination currentPage={pageNo} totalPages={totalPages} onPageChange={pageChangeHandler} />
             <ViewHistoryDetails isOpen={isViewHistoryModalOpen}
                 toggle={closeViewHistoryModal}
