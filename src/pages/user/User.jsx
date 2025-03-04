@@ -11,6 +11,8 @@ import ViewDetailsModal from "../../components/Modals/viewUserModal/viewUserModa
 import { setLoggedUser } from "../../redux/userSlice/userSlice";
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import { toast } from "react-toastify";
+import { setUsersRoleList } from "../../redux/historySlice/historySlice";
+import { baseURL } from "../../constants";
 
 const User = () => {
     const dispatch = useDispatch();
@@ -19,19 +21,20 @@ const User = () => {
     const [isViewUserModalOpen, setViewUserModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [formType, setFromType] = useState("create");
+    const [userDataToEdit, setUserDataToEdit] = useState();
 
-   useEffect(() => {
-    const UserList = async () => {
-        try {
-            const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
-            setUsers(response.data.results)
-        } catch (error) {
-            console.log("Error fetching users:", error);
-        }
-    };
-    UserList();
-   }, []);
-   
+    useEffect(() => {
+        const UserList = async () => {
+            try {
+                const response = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
+                setUsers(response.data.results)
+            } catch (error) {
+                console.log("Error fetching users:", error);
+            }
+        };
+        UserList();
+    }, [dispatch]);
 
     const userFields = [
         { label: "Email", key: "email" },
@@ -47,6 +50,8 @@ const User = () => {
     };
 
     const openCreateModal = () => {
+        setUserDataToEdit();
+        setFromType("create");
         setCreateModalOpen(true);
     };
 
@@ -71,7 +76,7 @@ const User = () => {
         } catch (error) {
             console.error(error);
             const serverResponse = error.response?.data;
-    
+
             if (serverResponse?.errors) {
                 const errorMessages = Object.values(serverResponse.errors)
                     .flat()
@@ -83,11 +88,18 @@ const User = () => {
             return false;
         }
     };
-    
+
+
     const handleDelete = (id) => {
         const updatedUsers = users.filter((user) => user.id !== id);
         dispatch(setLoggedUser(updatedUsers));
     };
+
+    const handleEdit = (data) => {
+        setUserDataToEdit(data);
+        setFromType("edit");
+        setCreateModalOpen(true);
+    }
 
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
@@ -97,11 +109,11 @@ const User = () => {
             >
                 <Eye size="20" className="text-blue-500" />
             </button>
-            {/* <EditCreateButton
+            <EditCreateButton
                 title="Edit User"
                 buttonType="edit"
-                toggle={() => console.log("Edit user:", row)}
-            /> */}
+                toggle={() => handleEdit(row)}
+            />
             <button
                 onClick={() => handleDelete(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
@@ -118,6 +130,22 @@ const User = () => {
         { field: "user_role?.name", header: "Role", body: (row) => <h6>{row?.user_role?.name || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
     ];
+
+    const fetchRoles = async () => {
+        try {
+            const response = await axios.get(`${baseURL}account/role/`);
+            if (response.data.status === "success") {
+                dispatch(setUsersRoleList(response.data.data));
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRoles();
+    }, []);
+
     return (
         <div className="bg-white rounded-xl m-4 sm:m-5 shadow-sm p-5 sm:p-7">
             <div className="flex justify-between flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 mb-6">
@@ -130,6 +158,8 @@ const User = () => {
                     isOpen={isCreateModalOpen}
                     toggle={closeCreateModal}
                     onUserCreated={handleUserCreated}
+                    formType={formType}
+                    data={userDataToEdit}
                 />
             )}
             <ViewDetailsModal

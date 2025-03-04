@@ -30,6 +30,7 @@ const initialState = {
     transformedContentResult: [],
     transformedContentId: undefined,
     scrapId: undefined,
+    rolesList: []
 };
 
 const historySlice = createSlice({
@@ -75,10 +76,12 @@ const historySlice = createSlice({
             state.transformedContentResult = action.payload.result;
             state.transformedContentId = action.payload.id;
         },
-
+        setUsersRoleList: (state, action) => {
+            state.rolesList = action.payload
+        },
         resetProcess: () => initialState,
     },
 });
 
-export const { setHistory, setUsedURLS, removeUsedURLS, setProcessToggle, setTabAccess, setScrappedData,setScrappedId, toggleLanguage, setTransformedContent, setTransformedContentResult, resetProcess } = historySlice.actions;
+export const { setHistory, setUsedURLS, removeUsedURLS, setProcessToggle, setTabAccess, setScrappedData, setScrappedId, toggleLanguage, setTransformedContent, setTransformedContentResult, setUsersRoleList, resetProcess } = historySlice.actions;
 export default historySlice.reducer;
