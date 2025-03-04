@@ -13,6 +13,8 @@ import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import { toast } from "react-toastify";
 import { setUsersRoleList } from "../../redux/historySlice/historySlice";
 import { baseURL } from "../../constants";
+import { authEndPoints } from "../../endPoints/AuthEndPoint";
+import DeleteModal from "../../components/Modals/DeleteModal/DeleteModal";
 
 const User = () => {
     const dispatch = useDispatch();
@@ -23,6 +25,9 @@ const User = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [formType, setFromType] = useState("create");
     const [userDataToEdit, setUserDataToEdit] = useState();
+    const [open, setOpen] = useState(false);
+    const [delId, setDelId] = useState(0);
+    const [cantDelete, setCantDelete] = useState(false);
 
     const UserList = async () => {
         try {
@@ -64,7 +69,7 @@ const User = () => {
         setSelectedUser(null);
         setViewUserModalOpen(false);
     };
-   
+
     const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
@@ -72,7 +77,7 @@ const User = () => {
             toast.success("User created successfully!");
             const updatedResponse = await axios.get(`${configurationEndPoints.user_list}?page=1&page_size=100`);
             setUsers(updatedResponse.data.results);
-    
+
             return true;
         } catch (error) {
             console.error(error);
@@ -90,17 +95,43 @@ const User = () => {
         }
     };
 
-
     const handleDelete = (id) => {
-        const updatedUsers = users.filter((user) => user.id !== id);
-        dispatch(setLoggedUser(updatedUsers));
+        try {
+            if (loggedUserDetails.id == id) {
+                alert("Action not allowed: You cannot delete your own account.");
+                return
+            };
+            axios.delete(`${authEndPoints.update_user}${id}/`).then((response) => {
+                console.log(response);
+            })
+        } catch (error) {
+            console.log(error);
+        };
     };
 
     const handleEdit = (data) => {
         setUserDataToEdit(data);
         setFromType("edit");
         setCreateModalOpen(true);
-    }
+    };
+
+    const toggleModalBtn = (id) => {
+        if (loggedUserDetails.id == id) {
+            setCantDelete(!cantDelete);
+            return
+        };
+        try {
+            setOpen(!open);
+            setDelId(id);
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
+
+    const deleteData = () => {
+        handleDelete(delId);
+        setOpen(!open);
+    };
 
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
@@ -116,7 +147,7 @@ const User = () => {
                 toggle={() => console.log("Edit user:", row)}
             />
             <button
-                onClick={() => handleDelete(row.id)}
+                onClick={() => toggleModalBtn(row.id)}
                 className="bg-red-100 px-1.5 py-2 rounded-sm"
             >
                 <Trash size="20" className="text-red-500" />
@@ -142,6 +173,8 @@ const User = () => {
             console.error("Error fetching roles:", error);
         }
     };
+
+    const handleCantDelete = () => setCantDelete(!cantDelete);
 
     useEffect(() => {
         fetchRoles();
@@ -170,7 +203,25 @@ const User = () => {
                 fields={userFields}
                 data={selectedUser}
             />
+            <DeleteModal
+                title="Delete User"
+                deleteBtn={deleteData}
+                toggleModalBtn={toggleModalBtn}
+                description={
+                    "Are you sure you want to delete this user."
+                }
+                open={open}
+            />
+
+            <DeleteModal
+                title="Action Not Allowed"
+                toggleModalBtn={handleCantDelete}
+                description="You cannot delete your own account. Please contact an administrator if you need assistance."
+                open={cantDelete}
+            />
+
         </div>
+
     );
 };
 
