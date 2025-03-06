@@ -17,8 +17,6 @@ import Pagination from "../../components/pagination/pagination";
 import usePaginatedData from "../../utils/usePaginatedData";
 import { authEndPoints } from "../../endPoints/AuthEndPoint";
 import DeleteModal from "../../components/Modals/DeleteModal/DeleteModal";
-
-
 const User = () => {
     const dispatch = useDispatch();
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
@@ -189,10 +187,13 @@ const User = () => {
             </button>
         </div>
     );
-
+    const capitalize = (str) => {
+        if (!str) return "--";
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
     const columns = [
-        { field: "first_name", header: "First Name", body: (row) => <h6>{row?.first_name || "--"}</h6>, style: { width: "30%" } },
-        { field: "last_name", header: "Last Name", body: (row) => <h6>{row?.last_name || "--"}</h6>, style: { width: "30%" } },
+        { field: "first_name", header: "First Name", body: (row) => <h6>{capitalize(row?.first_name) || "--"}</h6>, style: { width: "30%" } },
+        { field: "last_name", header: "Last Name", body: (row) => <h6>{capitalize(row?.last_name) || "--"}</h6>, style: { width: "30%" } },
         { field: "email", header: "Email", body: (row) => <h6>{row?.email || "--"}</h6>, style: { width: "30%" } },
         { field: "user_role?.name", header: "Role", body: (row) => <h6>{row?.user_role?.name || "--"}</h6>, style: { width: "20%" } },
         { header: "Actions", body: (row) => actionBodyTemplate(row), style: { width: "40%" } },
