@@ -16,6 +16,8 @@ import { baseURL } from "../../constants";
 import DeleteModal from '../../components/Modals/DeleteModal/DeleteModal';
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import PageLoader from "../../components/Loader/PageLoader";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const History = () => {
     const dispatch = useDispatch();
@@ -157,55 +159,149 @@ const History = () => {
         document.body.removeChild(link);
     };
 
-    // Function to convert JSON to CSV format
-    const convertToCSV_V2 = (jsonArray) => {
-        const headers = Object.keys(jsonArray[0]).join(",");
-        const rows = jsonArray.map((obj) =>
-            Object.values(obj)
-                .map((val) => `"${val}"`)
-                .join(",")
-        );
-        return [headers, ...rows].join("\n");
+    // // Function to convert JSON to CSV format
+    // const convertToCSV_V2 = (jsonArray) => {
+    //     const headers = Object.keys(jsonArray[0]).join(",");
+    //     const rows = jsonArray.map((obj) =>
+    //         Object.values(obj)
+    //             .map((val) => `"${val}"`)
+    //             .join(",")
+    //     );
+    //     return [headers, ...rows].join("\n");
+    // };
+
+    // const downloadCSV_V2 = (jsonData) => {
+    //     try {
+    //         setLoading(true);
+    //         const csvData = convertToCSV_V2(jsonData);
+    //         const blob = new Blob([csvData], { type: "text/csv" });
+    //         const url = window.URL.createObjectURL(blob);
+
+    //         // Generate filename with current date & time
+    //         const now = new Date();
+    //         const formattedDate = now
+    //             .toISOString()
+    //             .replace(/T/, "_") // Replace 'T' with '_'
+    //             .replace(/:/g, "-") // Replace colons with dashes
+    //             .split(".")[0]; // Remove milliseconds
+    //         const fileName = `Scrapped_Content_${formattedDate}.xlsx`;
+
+    //         const a = document.createElement("a");
+    //         a.href = url;
+    //         a.download = fileName;
+    //         a.click();
+    //         window.URL.revokeObjectURL(url);
+    //     } catch (error) {
+    //         setLoading(false);
+    //     }
+    // };
+
+    // Process JSON keys to human-readable headers
+    const processHeaders = (item) => {
+        try {
+            const headerMap = generateHeaderMap([item]); // Pass item as an array
+            return Object.keys(item).reduce((acc, key) => {
+                acc[headerMap[key] || key] = item[key];
+                return acc;
+            }, {});
+        } catch (error) {
+            console.error('Error processing headers:', error);
+            setLoading(false);
+            return {};
+        }
     };
 
-    const downloadCSV_V2 = (jsonData) => {
+    // Generate dynamic header map
+    const generateHeaderMap = (data) => {
         try {
-            setLoading(true);
-            const csvData = convertToCSV_V2(jsonData);
-            const blob = new Blob([csvData], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
+            if (!data || data.length === 0) {
+                throw new Error('No data available to generate headers.');
+            }
 
-            // Generate filename with current date & time
-            const now = new Date();
-            const formattedDate = now
-                .toISOString()
-                .replace(/T/, "_") // Replace 'T' with '_'
-                .replace(/:/g, "-") // Replace colons with dashes
-                .split(".")[0]; // Remove milliseconds
-            const fileName = `Scrapped_Content_${formattedDate}.csv`;
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            const keys = Object.keys(data[0]);
+            return keys.reduce((acc, key) => {
+                acc[key] = key
+                    .replace(/_/g, ' ') // Replace underscores with spaces
+                    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letters
+                return acc;
+            }, {});
         } catch (error) {
+            console.error('Error generating header map:', error);
+            setLoading(false);
+            return {};
+        }
+    };
+
+    // Export data to Excel
+    const exportToExcel = (data) => {
+        try {
+            if (!data || data.length === 0) {
+                throw new Error('No data to export.');
+            }
+
+            // 1. Process data
+            const processedData = data.map((item) => processHeaders(item));
+            const headerMap = generateHeaderMap(data);
+
+            // 2. Create worksheet
+            const ws = XLSX.utils.json_to_sheet(processedData, { header: Object.values(headerMap) });
+
+            // 3. Add bold headers
+            const headerRange = XLSX.utils.decode_range(ws['!ref']);
+            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+                const address = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
+                if (!ws[address]) continue;
+                // ws[address].s = { font: { bold: true } };
+                ws[address].s = {
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    fill: { fgColor: { rgb: "4F81BD" } }, 
+                    alignment: { horizontal: "center" } 
+                };
+            }
+
+            // 4. Create workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Products");
+
+            // 5. Generate Excel file
+            const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([excelBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+
+            // 6. Trigger download
+            saveAs(blob, "products.xlsx");
+            setLoading(false);
+        } catch (error) {
+            console.error('Error exporting to Excel:', error);
             setLoading(false);
         }
     };
 
+    // Download data from API and export to Excel
     const downloadInExcelV2 = (row) => {
         try {
             setLoading(true);
-            axios.post(configurationEndPoints.download_scrap, { "scrapped_id": row.id }).then((response) => {
-                downloadCSV_V2(response.data.data);
-                setLoading(false);
-            })
+            axios
+                .post(configurationEndPoints.download_scrap, { scrapped_id: row.id })
+                .then((response) => {
+                    if (response.data && response.data.data) {
+                        exportToExcel(response.data.data);
+                    } else {
+                        throw new Error('No data received from the API.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('API Error:', error);
+                    setLoading(false);
+                });
         } catch (error) {
-            console.log(error);
+            console.error('Error in downloadInExcelV2:', error);
             setLoading(false);
-        };
+        }
     };
+
+
 
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
