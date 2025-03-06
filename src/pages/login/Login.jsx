@@ -11,6 +11,7 @@ import { authEndPoints } from '../../endPoints/AuthEndPoint';
 import LoadBox from '../../components/Loader/LoadBox';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Error from '../../components/Errors/Error';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ const Login = () => {
                       className={`${inputClass} bg-neutral-100 border border-gray-200/50`}
                       {...register('email', { required: true })}
                     />
-                    {errors.email && <Error title={'Email is required*'} />}
+                    {errors?.email && <Error title={'Email is required*'} />}
                   </div>
 
                 </div>
@@ -104,7 +105,7 @@ const Login = () => {
                       }
                     </span>
                   </div>
-                  {errors.password && <p className='text-red-500 text-xs'>Password is required*</p>}
+                  {errors?.password && <Error title={'Password is required*'} />}
                 </div>
 
                 <div className="pt-3">
