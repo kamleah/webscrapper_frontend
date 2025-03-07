@@ -16,8 +16,7 @@ import { baseURL } from "../../constants";
 import DeleteModal from '../../components/Modals/DeleteModal/DeleteModal';
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import PageLoader from "../../components/Loader/PageLoader";
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import { exportToExcel } from "../../utils/constant";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -89,196 +88,6 @@ const History = () => {
         }
     };
 
-    const getUniqueKeysWithLanguage = (rowData) => {
-        const keysSet = new Set();
-
-        rowData.forEach(item => {
-            const languagePrefix = item.language.toLowerCase(); // Convert to lowercase for consistency
-            Object.keys(item.content_json).forEach(key => {
-                keysSet.add(`${languagePrefix}_${key}`); // Prefix keys with language
-            });
-        });
-
-        return Array.from(keysSet);
-    };
-    const generateCSVFile = (headers, rowData) => {
-        let csvContent = headers.join(",") + "\n"; // Add header row
-
-        rowData.forEach(historyData => {
-            const row = headers.map(header => {
-                let value = historyData[header] || ""; // Get value or empty string if undefined
-                return Array.isArray(value) ? `"${value.join("; ")}"` : `"${value}"`; // Handle arrays properly
-            });
-            csvContent += row.join(",") + "\n"; // Add row data
-        });
-
-        return csvContent;
-    };
-
-    const transformDataForCSV = (rowData) => {
-        const transformedItem = {}; // Single row object
-
-        rowData.forEach(item => {
-            const languagePrefix = item.language.toLowerCase();
-
-            if (item.content_json && Object.keys(item.content_json).length > 0) {
-                Object.keys(item.content_json).forEach(key => {
-                    let value = item.content_json[key];
-
-                    // Handle arrays by joining them with a comma
-                    if (Array.isArray(value)) {
-                        value = value.map(v =>
-                            typeof v === "object" ? JSON.stringify(v) : v
-                        ).join(", ");
-                    }
-
-                    // Handle objects by converting them into key-value pairs
-                    else if (typeof value === "object" && value !== null) {
-                        value = Object.entries(value)
-                            .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
-                            .join(" | ");
-                    }
-
-                    // Store in the single row object
-                    transformedItem[`${languagePrefix}_${key}`] = value;
-                });
-            }
-        });
-
-        return [transformedItem]; // Return as an array containing a single object (one row)
-    };
-
-
-    const downloadCSV = (csvContent, filename) => {
-        const blob = new Blob([csvContent], { type: "text/csv" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    // // Function to convert JSON to CSV format
-    // const convertToCSV_V2 = (jsonArray) => {
-    //     const headers = Object.keys(jsonArray[0]).join(",");
-    //     const rows = jsonArray.map((obj) =>
-    //         Object.values(obj)
-    //             .map((val) => `"${val}"`)
-    //             .join(",")
-    //     );
-    //     return [headers, ...rows].join("\n");
-    // };
-
-    // const downloadCSV_V2 = (jsonData) => {
-    //     try {
-    //         setLoading(true);
-    //         const csvData = convertToCSV_V2(jsonData);
-    //         const blob = new Blob([csvData], { type: "text/csv" });
-    //         const url = window.URL.createObjectURL(blob);
-
-    //         // Generate filename with current date & time
-    //         const now = new Date();
-    //         const formattedDate = now
-    //             .toISOString()
-    //             .replace(/T/, "_") // Replace 'T' with '_'
-    //             .replace(/:/g, "-") // Replace colons with dashes
-    //             .split(".")[0]; // Remove milliseconds
-    //         const fileName = `Scrapped_Content_${formattedDate}.xlsx`;
-
-    //         const a = document.createElement("a");
-    //         a.href = url;
-    //         a.download = fileName;
-    //         a.click();
-    //         window.URL.revokeObjectURL(url);
-    //     } catch (error) {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // Process JSON keys to human-readable headers
-    const processHeaders = (item) => {
-        try {
-            const headerMap = generateHeaderMap([item]); // Pass item as an array
-            return Object.keys(item).reduce((acc, key) => {
-                acc[headerMap[key] || key] = item[key];
-                return acc;
-            }, {});
-        } catch (error) {
-            console.error('Error processing headers:', error);
-            setLoading(false);
-            return {};
-        }
-    };
-
-    // Generate dynamic header map
-    const generateHeaderMap = (data) => {
-        try {
-            if (!data || data.length === 0) {
-                throw new Error('No data available to generate headers.');
-            }
-
-            const keys = Object.keys(data[0]);
-            return keys.reduce((acc, key) => {
-                acc[key] = key
-                    .replace(/_/g, ' ') // Replace underscores with spaces
-                    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letters
-                return acc;
-            }, {});
-        } catch (error) {
-            console.error('Error generating header map:', error);
-            setLoading(false);
-            return {};
-        }
-    };
-
-    // Export data to Excel
-    const exportToExcel = (data) => {
-        try {
-            if (!data || data.length === 0) {
-                throw new Error('No data to export.');
-            }
-
-            // 1. Process data
-            const processedData = data.map((item) => processHeaders(item));
-            const headerMap = generateHeaderMap(data);
-
-            // 2. Create worksheet
-            const ws = XLSX.utils.json_to_sheet(processedData, { header: Object.values(headerMap) });
-
-            // 3. Add bold headers
-            const headerRange = XLSX.utils.decode_range(ws['!ref']);
-            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-                const address = XLSX.utils.encode_cell({ r: headerRange.s.r, c: C });
-                if (!ws[address]) continue;
-                // ws[address].s = { font: { bold: true } };
-                ws[address].s = {
-                    font: { bold: true, color: { rgb: "FFFFFF" } },
-                    fill: { fgColor: { rgb: "4F81BD" } }, 
-                    alignment: { horizontal: "center" } 
-                };
-            }
-
-            // 4. Create workbook
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Products");
-
-            // 5. Generate Excel file
-            const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-            const blob = new Blob([excelBuffer], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            });
-
-            // 6. Trigger download
-            saveAs(blob, "products.xlsx");
-            setLoading(false);
-        } catch (error) {
-            console.error('Error exporting to Excel:', error);
-            setLoading(false);
-        }
-    };
-
-    // Download data from API and export to Excel
     const downloadInExcelV2 = (row) => {
         try {
             setLoading(true);
@@ -287,6 +96,7 @@ const History = () => {
                 .then((response) => {
                     if (response.data && response.data.data) {
                         exportToExcel(response.data.data);
+                        setLoading(false);
                     } else {
                         throw new Error('No data received from the API.');
                     }
@@ -300,9 +110,7 @@ const History = () => {
             setLoading(false);
         }
     };
-
-
-
+    
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
             <button
