@@ -20,6 +20,8 @@
     "axios": "^1.7.2",
     "caniuse-lite": "^1.0.30001699",
     "draft-js": "^0.11.7",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "greeting-time": "^1.0.0",
     "iconsax-react": "^0.0.8",
     "lucide-react": "^0.439.0",
@@ -43,7 +45,8 @@
     "react-tabs": "^6.1.0",
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
-    "update-browserslist-db": "^1.1.2"
+    "update-browserslist-db": "^1.1.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

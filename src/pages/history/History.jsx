@@ -16,6 +16,7 @@ import { baseURL } from "../../constants";
 import DeleteModal from '../../components/Modals/DeleteModal/DeleteModal';
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import PageLoader from "../../components/Loader/PageLoader";
+import { exportToExcel } from "../../utils/constant";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -87,126 +88,29 @@ const History = () => {
         }
     };
 
-    const getUniqueKeysWithLanguage = (rowData) => {
-        const keysSet = new Set();
-
-        rowData.forEach(item => {
-            const languagePrefix = item.language.toLowerCase(); // Convert to lowercase for consistency
-            Object.keys(item.content_json).forEach(key => {
-                keysSet.add(`${languagePrefix}_${key}`); // Prefix keys with language
-            });
-        });
-
-        return Array.from(keysSet);
-    };
-    const generateCSVFile = (headers, rowData) => {
-        let csvContent = headers.join(",") + "\n"; // Add header row
-
-        rowData.forEach(historyData => {
-            const row = headers.map(header => {
-                let value = historyData[header] || ""; // Get value or empty string if undefined
-                return Array.isArray(value) ? `"${value.join("; ")}"` : `"${value}"`; // Handle arrays properly
-            });
-            csvContent += row.join(",") + "\n"; // Add row data
-        });
-
-        return csvContent;
-    };
-
-    const transformDataForCSV = (rowData) => {
-        const transformedItem = {}; // Single row object
-
-        rowData.forEach(item => {
-            const languagePrefix = item.language.toLowerCase();
-
-            if (item.content_json && Object.keys(item.content_json).length > 0) {
-                Object.keys(item.content_json).forEach(key => {
-                    let value = item.content_json[key];
-
-                    // Handle arrays by joining them with a comma
-                    if (Array.isArray(value)) {
-                        value = value.map(v =>
-                            typeof v === "object" ? JSON.stringify(v) : v
-                        ).join(", ");
-                    }
-
-                    // Handle objects by converting them into key-value pairs
-                    else if (typeof value === "object" && value !== null) {
-                        value = Object.entries(value)
-                            .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
-                            .join(" | ");
-                    }
-
-                    // Store in the single row object
-                    transformedItem[`${languagePrefix}_${key}`] = value;
-                });
-            }
-        });
-
-        return [transformedItem]; // Return as an array containing a single object (one row)
-    };
-
-
-    const downloadCSV = (csvContent, filename) => {
-        const blob = new Blob([csvContent], { type: "text/csv" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    // Function to convert JSON to CSV format
-    const convertToCSV_V2 = (jsonArray) => {
-        const headers = Object.keys(jsonArray[0]).join(",");
-        const rows = jsonArray.map((obj) =>
-            Object.values(obj)
-                .map((val) => `"${val}"`)
-                .join(",")
-        );
-        return [headers, ...rows].join("\n");
-    };
-
-    const downloadCSV_V2 = (jsonData) => {
-        try {
-            setLoading(true);
-            const csvData = convertToCSV_V2(jsonData);
-            const blob = new Blob([csvData], { type: "text/csv" });
-            const url = window.URL.createObjectURL(blob);
-
-            // Generate filename with current date & time
-            const now = new Date();
-            const formattedDate = now
-                .toISOString()
-                .replace(/T/, "_") // Replace 'T' with '_'
-                .replace(/:/g, "-") // Replace colons with dashes
-                .split(".")[0]; // Remove milliseconds
-            const fileName = `Scrapped_Content_${formattedDate}.csv`;
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            setLoading(false);
-        }
-    };
-
     const downloadInExcelV2 = (row) => {
         try {
             setLoading(true);
-            axios.post(configurationEndPoints.download_scrap, { "scrapped_id": row.id }).then((response) => {
-                downloadCSV_V2(response.data.data);
-                setLoading(false);
-            })
+            axios
+                .post(configurationEndPoints.download_scrap, { scrapped_id: row.id })
+                .then((response) => {
+                    if (response.data && response.data.data) {
+                        exportToExcel(response.data.data);
+                        setLoading(false);
+                    } else {
+                        throw new Error('No data received from the API.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('API Error:', error);
+                    setLoading(false);
+                });
         } catch (error) {
-            console.log(error);
+            console.error('Error in downloadInExcelV2:', error);
             setLoading(false);
-        };
+        }
     };
-
+    
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
             <button
