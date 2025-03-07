@@ -18,6 +18,7 @@ import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import PageLoader from "../../components/Loader/PageLoader";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import ExcelJS from "exceljs";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -233,7 +234,7 @@ const History = () => {
     };
 
     // Export data to Excel
-    const exportToExcel = (data) => {
+    const exportToExcelOld = (data) => {
         try {
             if (!data || data.length === 0) {
                 throw new Error('No data to export.');
@@ -254,7 +255,7 @@ const History = () => {
                 // ws[address].s = { font: { bold: true } };
                 ws[address].s = {
                     font: { bold: true, color: { rgb: "FFFFFF" } },
-                    fill: { fgColor: { rgb: "4F81BD" } }, 
+                    fill: { fgColor: { rgb: "FF0000" } }, 
                     alignment: { horizontal: "center" } 
                 };
             }
@@ -275,6 +276,58 @@ const History = () => {
         } catch (error) {
             console.error('Error exporting to Excel:', error);
             setLoading(false);
+        }
+    };
+
+    const exportToExcel = async (data) => {
+        try {
+            if (!data || data.length === 0) {
+                throw new Error("No data to export.");
+            }
+    
+            // 1. Create a new workbook and worksheet
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Scraped Data");
+    
+            // 2. Process Data & Headers
+            const processedData = data.map((item) => processHeaders(item));
+            const headerMap = generateHeaderMap(data);
+            const headers = Object.values(headerMap);
+    
+            // 3. Apply Red Styling to Headers
+            const headerRow = worksheet.addRow(headers);
+            headerRow.eachCell((cell) => {
+                cell.fill = {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: "FF0000" }, // Red background
+                };
+                cell.font = {
+                    bold: true,
+                    color: { argb: "FFFFFF" }, // White text
+                };
+                cell.alignment = { horizontal: "center", vertical: "middle" };
+            });
+    
+            // 4. Add Data Rows
+            processedData.forEach((rowData) => {
+                worksheet.addRow(Object.values(rowData));
+            });
+    
+            // 5. Adjust Column Widths
+            worksheet.columns.forEach((column) => {
+                column.width = 20;
+            });
+    
+            // 6. Generate Excel File & Trigger Download
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+    
+            saveAs(blob, "Scraped_Data.xlsx");
+        } catch (error) {
+            console.error("Error exporting to Excel:", error);
         }
     };
 
