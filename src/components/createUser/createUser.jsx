@@ -11,6 +11,7 @@ import { baseURL } from "../../constants";
 import { useSelector } from "react-redux";
 import { authEndPoints } from "../../endPoints/AuthEndPoint";
 
+
 export default function CreateUserModal({ isOpen, onUserCreated,onUserEdit, closeOnSuccess = true, toggle, props = {}, formType, data }) {
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
     const [loader, setLoader] = useState(false);
@@ -34,7 +35,6 @@ export default function CreateUserModal({ isOpen, onUserCreated,onUserEdit, clos
                 //     reset();
                 //     toggle();
                 // })
-
                 setLoader(true);
                 const isSuccess = await onUserEdit(formData, data?.id);
                 setLoader(false);
