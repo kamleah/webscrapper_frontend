@@ -8,10 +8,12 @@ import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
+import FireCrawler from "../fireCrawler/Firecrawler";
 
 const Scrapping = () => {
     const dispatch = useDispatch();
     const { tabAccess, scrappedData, tabProcessStarted, userURLS, transformedContent, scrapId } = useSelector((state) => state.history);
+    console.log("scrapId>>", scrapId);  
     const [selectedTab, setSelectedTab] = useState(0);
     // const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
@@ -32,8 +34,9 @@ const Scrapping = () => {
             // Make sure the ID exists before dispatching
             if (response && response.scraped_id) {
                 try {
+                    dispatch(setScrappedId(response.scraped_id));
                     console.log("inside dispatch");
-                    
+
                 } catch (error) {
                     console.log(error);
                 }
@@ -86,7 +89,8 @@ const Scrapping = () => {
                 </TabList>
 
                 <TabPanel>
-                    <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} />
+                    {/* <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} /> */}
+                    <FireCrawler handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} />
                 </TabPanel>
 
                 <TabPanel>

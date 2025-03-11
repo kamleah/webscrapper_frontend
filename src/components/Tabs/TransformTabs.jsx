@@ -7,6 +7,7 @@ import { setProcessToggle, setScrappedData, setTabAccess, toggleLanguage } from 
 import { useDispatch, useSelector } from 'react-redux';
 
 const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
+    console.log("scraped><>", scraped_id);
     const dispatch = useDispatch();
     const [loader, setLoader] = useState(false);
     const [accordian, setAccordian] = useState(null);
@@ -17,8 +18,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     const { scrappedData, languages, selectedLanguages } = useSelector((state) => state.history);
     console.log("scrappedData-->", scrappedData);
     console.log("languages", languages);
-    
-    
+
     const {
         control,
         handleSubmit,
@@ -32,9 +32,10 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     });
 
     const GetScrapDetails = (scrapId) => {
+        console.log("scrapId", scrapId);
         try {
             setLoading(true);
-            axios.get(`${configurationEndPoints.user_scrap_by_id}${scrapId}/`)
+            axios.get(`${configurationEndPoints.firecrawl_scrap_by_id}${scrapId}/`)
                 .then((response) => {
                     dispatch(setScrappedData(response.data.data.scraped_data.scrap_data));
                     setLoading(false);
@@ -50,10 +51,11 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     };
 
     useEffect(() => {
-        if (scraped_id) {
-            GetScrapDetails(scraped_id);
-        }
-    }, [scraped_id]);
+        // if (scraped_id) {
+        //     console.log("scraped_id", scraped_id);
+        // }
+        GetScrapDetails(scraped_id);
+    }, []);
 
     const onSubmit = (data) => {
         dispatch(setProcessToggle(true));
@@ -71,8 +73,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         });
     };
-
-
     return (
         <div>
             <div className='my-5'>

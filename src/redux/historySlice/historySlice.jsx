@@ -61,6 +61,7 @@ const historySlice = createSlice({
         setScrappedId: (state, action) => {
             state.scrapId = action.payload
         },
+       
         toggleLanguage: (state, action) => {
             const languageId = action.payload;
             if (state.selectedLanguages.includes(languageId)) {
