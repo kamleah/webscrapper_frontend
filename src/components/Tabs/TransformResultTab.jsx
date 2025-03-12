@@ -10,7 +10,6 @@ import { setTransformedContentResult } from '../../redux/historySlice/historySli
 import { exportToExcel } from '../../utils/constant';
 
 const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id, setLoading }) => {
-    console.log(transformedContent,">>>>>>>>>>")
     const { transformedContentResult, transformedContentId } = useSelector((state) => state.history);
 
     const [selectedTags, setSelectedTags] = useState(['name', 'price']);
@@ -39,7 +38,6 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
                         result: response.data.data,
                         id: contentId
                     };
-                    console.log(payload,"kkkkkkkkkkkkkkkk")
                     dispatch(setTransformedContentResult(payload));
                     // downloadInExcel({ user_scrap_history: payload.result });
                     exportToExcel(payload.result)
