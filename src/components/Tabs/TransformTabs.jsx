@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
     console.log("scraped><>", scraped_id);
     const dispatch = useDispatch();
+    const { accessToken } = useSelector((state) => state.auth);
     const [loader, setLoader] = useState(false);
     const [accordian, setAccordian] = useState(null);
     const toggleAccordion = (index) => {
@@ -35,9 +36,15 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         console.log("scrapId", scrapId);
         try {
             setLoading(true);
-            axios.get(`${configurationEndPoints.firecrawl_scrap_by_id}${scrapId}/`)
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
+            axios.get(`${configurationEndPoints.firecrawl_scrap_by_id}${scrapId}/`, config)
+
                 .then((response) => {
-                    dispatch(setScrappedData(response.data.data.scraped_data.scrap_data));
+                    console.log(response.data, "kjsdofreo")
+                    dispatch(setScrappedData(response.data.data.data));
+                    console.log(response.data.data.data, "kmdcd")
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -49,13 +56,12 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         }
     };
-
     useEffect(() => {
-        // if (scraped_id) {
-        //     console.log("scraped_id", scraped_id);
-        // }
-        GetScrapDetails(scraped_id);
-    }, []);
+        if (scraped_id) {
+            GetScrapDetails(scraped_id);
+            console.log("scraped_id", scraped_id);
+        }
+    }, [scraped_id]);
 
     const onSubmit = (data) => {
         dispatch(setProcessToggle(true));
@@ -73,6 +79,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         });
     };
+
     return (
         <div>
             <div className='my-5'>
@@ -85,8 +92,11 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                             onClick={() => toggleAccordion(index)}
                             className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
                         >
-                            <h3 className="text-blue-600 text-sm font-bold">
+                            {/* <h3 className="text-blue-600 text-sm font-bold">
                                 {index + 1}. {data.name} - {data.price}
+                            </h3> */}
+                            <h3 className="text-blue-600 text-sm font-bold">
+                               Product Details
                             </h3>
                             {accordian === index ? (
                                 <ChevronUp className="text-blue-600" />
@@ -100,10 +110,10 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                 : "max-h-0 overflow-hidden"
                                 }`}
                         >
-                            <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5>
-                            <p className="text-sm text-gray-700">{data.description}</p>
+                            {/* <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5> */}
+                            <p className="text-sm text-gray-700">{data.markdown}</p>
                             <a
-                                href={data.url}
+                                href={data.metadata.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-500 underline mt-2 block"

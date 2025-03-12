@@ -13,7 +13,7 @@ import FireCrawler from "../fireCrawler/Firecrawler";
 const Scrapping = () => {
     const dispatch = useDispatch();
     const { tabAccess, scrappedData, tabProcessStarted, userURLS, transformedContent, scrapId } = useSelector((state) => state.history);
-    console.log("scrapId>>", scrapId);  
+    console.log("scrapId>>", scrapId);
     const [selectedTab, setSelectedTab] = useState(0);
     // const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
@@ -21,6 +21,7 @@ const Scrapping = () => {
     const activeTabStyle = 'text-blue-500 border-b-2 border-blue-400 outline-0';
     const inActiveTabStyle = 'text-gray-500';
     const tabs = ["Extract", "Transform", "Result"];
+    const [isWaiting, setIsWaiting] = useState(false);
 
     const handleResponseRecieved = (response) => {
         try {
@@ -28,21 +29,23 @@ const Scrapping = () => {
             // Make sure the data exists before dispatching
             if (response && response.scraped_data) {
                 dispatch(setScrappedData(response.scraped_data));
-                dispatch(setScrappedId(response.scraped_id));
+                dispatch(setScrappedId(response.id));
             }
-
             // Make sure the ID exists before dispatching
-            if (response && response.scraped_id) {
+            if (response && response.id) {
                 try {
-                    dispatch(setScrappedId(response.scraped_id));
+                    dispatch(setScrappedId(response.id));
                     console.log("inside dispatch");
 
                 } catch (error) {
                     console.log(error);
                 }
             }
-
-            setSelectedTab(1);
+            setIsWaiting(true)
+            setTimeout(() => {
+                setIsWaiting(false)
+                setSelectedTab(1);
+            }, 10000)
         } catch (error) {
             console.log(error);
         };
@@ -101,7 +104,7 @@ const Scrapping = () => {
                     <TransformResultTab transformedContent={transformedContent} scraped_id={scrapId} handleResetProcess={handleResetProcess} setLoading={setLoading} />
                 </TabPanel>
             </Tabs>
-
+            {isWaiting && <PageLoader />}
             {loading && <PageLoader />}
 
         </div>

@@ -47,9 +47,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             };
             const config = {
                 headers: { Authorization: `Bearer ${accessToken}` },
-
             };
-            
             axios.post(configurationEndPoints.firecrawl_scrap, crawlingPayload, config).then((response) => {
 
                 handleResponseRecieved(response.data.data);
