@@ -10,5 +10,7 @@ export const configurationEndPoints = {
     delete_history: `${baseURL}scrap/delete-history/`,
     download_scrap: `${baseURL}scrap/download-scrap/`,
     firecrawl_scrap:`${baseURL}scrap/firecrawl-scrap-batch/`,
-    firecrawl_scrap_by_id:`${baseURL}scrap/firecrawl-scrap/`
+    firecrawl_scrap_by_id:`${baseURL}scrap/firecrawl-scrap/`,
+    firecrawl_scrap_translate:`${baseURL}scrap/firecrawl-scrap-translate/`,
+    firecrawl_scrap_download:`${baseURL}scrap/firecrawl-scrap-translate-json/`,
 };

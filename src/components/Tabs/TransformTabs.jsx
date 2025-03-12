@@ -7,7 +7,6 @@ import { setProcessToggle, setScrappedData, setTabAccess, toggleLanguage } from 
 import { useDispatch, useSelector } from 'react-redux';
 
 const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
-    console.log("scraped><>", scraped_id);
     const dispatch = useDispatch();
     const { accessToken } = useSelector((state) => state.auth);
     const [loader, setLoader] = useState(false);
@@ -33,7 +32,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     });
 
     const GetScrapDetails = (scrapId) => {
-        console.log("scrapId", scrapId);
         try {
             setLoading(true);
             const config = {
@@ -42,9 +40,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             axios.get(`${configurationEndPoints.firecrawl_scrap_by_id}${scrapId}/`, config)
 
                 .then((response) => {
-                    console.log(response.data, "kjsdofreo")
                     dispatch(setScrappedData(response.data.data.data));
-                    console.log(response.data.data.data, "kmdcd")
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -68,9 +64,12 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         dispatch(setTabAccess({ index: 2, access: true }));
         setLoader(true);
         setLoading(true);
-        data.content_id = scraped_id;
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        };
+        data.scrap_id = scraped_id;
         data.languages = ["english", ...data.languages]
-        axios.post(configurationEndPoints.translate_content, data).then((response) => {
+        axios.post(configurationEndPoints.firecrawl_scrap_translate, data , config).then((response) => {
             handleContentTransformed(response.data.data);
             setLoader(false);
             setLoading(false);
@@ -111,7 +110,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                 }`}
                         >
                             {/* <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5> */}
-                            <p className="text-sm text-gray-700">{data.markdown}</p>
+                            <p className="text-md text-gray-700">{data.markdown}</p>
                             <a
                                 href={data.metadata.url}
                                 target="_blank"
@@ -124,7 +123,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                     </div>
                 ))}
             </div>
-
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
