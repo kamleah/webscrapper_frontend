@@ -41,11 +41,11 @@ const Scrapping = () => {
                     console.log(error);
                 }
             }
-            setIsWaiting(true)
-            setTimeout(() => {
-                setIsWaiting(false)
-                setSelectedTab(1);
-            }, 10000)
+            setSelectedTab(1);
+            // setIsWaiting(true)
+            // setTimeout(() => {
+            //     setIsWaiting(false)
+            // }, 10000)
         } catch (error) {
             console.log(error);
         };
@@ -104,7 +104,7 @@ const Scrapping = () => {
                     <TransformResultTab transformedContent={transformedContent} scraped_id={scrapId} handleResetProcess={handleResetProcess} setLoading={setLoading} />
                 </TabPanel>
             </Tabs>
-            {isWaiting && <PageLoader />}
+            {/* {isWaiting && <PageLoader />} */}
             {loading && <PageLoader />}
 
         </div>

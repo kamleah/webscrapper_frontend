@@ -11,7 +11,7 @@ const Sidebar = ({ children }) => {
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const dispatch = useDispatch()
   const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
-  const filtered = DashboardRouter.filter((routes)=> routes.title != "User")
+  const filtered = DashboardRouter.filter((routes)=> routes.title != "User" && routes.title != "Language")
   const removedArray = loggedUserDetails.user_role.name == "Employee" ? filtered : DashboardRouter
   
   return (
