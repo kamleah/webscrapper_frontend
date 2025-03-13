@@ -91,11 +91,8 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                             onClick={() => toggleAccordion(index)}
                             className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
                         >
-                            {/* <h3 className="text-blue-600 text-sm font-bold">
-                                {index + 1}. {data.name} - {data.price}
-                            </h3> */}
                             <h3 className="text-blue-600 text-sm font-bold">
-                               Product Details
+                              {data.title}
                             </h3>
                             {accordian === index ? (
                                 <ChevronUp className="text-blue-600" />
@@ -109,16 +106,16 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                 : "max-h-0 overflow-hidden"
                                 }`}
                         >
-                            {/* <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5> */}
-                            <p className="text-md text-gray-700">{data.markdown}</p>
-                            <a
-                                href={data.metadata.url}
+                            <p className="text-md text-gray-700">{data.price}</p>
+                            <p className="text-md text-gray-700">{data.description}</p>
+                            {/* <a
+                                href={data.urls}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-500 underline mt-2 block"
                             >
                                 View Product
-                            </a>
+                            </a> */}
                         </div>
                     </div>
                 ))}

@@ -13,4 +13,5 @@ export const configurationEndPoints = {
     firecrawl_scrap_by_id:`${baseURL}scrap/firecrawl-scrap/`,
     firecrawl_scrap_translate:`${baseURL}scrap/firecrawl-scrap-translate/`,
     firecrawl_scrap_download:`${baseURL}scrap/firecrawl-scrap-translate-json/`,
+    firecrawl_scrap_v2 :` ${baseURL}scrap/firecrawl-scrap-batch-v2/`
 };

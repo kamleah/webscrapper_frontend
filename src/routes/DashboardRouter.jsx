@@ -1,10 +1,6 @@
 import {
     CpuSetting,
-    Cup,
-    Element4,
-    ElementPlus,
-    Game,
-    I3Dcube,
+    LanguageSquare,
     MenuBoard,
     MessageFavorite,
     Moneys,
@@ -15,7 +11,7 @@ import {
     User,
 } from "iconsax-react";
 
-export const RestrictedTitlesNonSuperAdmin = ['User']
+export const RestrictedTitlesNonSuperAdmin = ['User','Language']
 
 export const DashboardRouter = [
     {
@@ -32,6 +28,11 @@ export const DashboardRouter = [
         title: 'User',
         icon: <User size="24" variant="TwoTone" />,
         link: '/users',
-    }
+    },
+    // {
+    //     title: 'Language',
+    //     icon: <LanguageSquare size="24" variant="TwoTone" />,
+    //     link: '/language',
+    // }
 ]
 
