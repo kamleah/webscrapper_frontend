@@ -212,7 +212,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
                             )}
                         </div>
                     ))}
-                    {loggedUserDetails.process_type !== "single" && (
+                    {/* {loggedUserDetails.process_type !== "single" && ( */}
                         <button
                             type="button"
                             onClick={() => appendExtractInfo({ info: '', required: false })}
@@ -220,7 +220,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
                         >
                             Add More <AddSquare size="20" className="ml-2" />
                         </button>
-                    )}
+                    {/* )} */}
                 </div>
 
                 {/* Submit Button */}
