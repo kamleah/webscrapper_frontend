@@ -157,7 +157,9 @@ body::-webkit-scrollbar-thumb {
 .p-column-header-content svg {
     color: #fff !important
 }
-
+.p-column-header-content {
+ justify-content: center;
+}
 .p-paginator {
     border: none !important;
     justify-content: end !important;
