@@ -47,31 +47,40 @@ const ViewHistoryDetails = ({ isOpen, toggle, title, data }) => {
                                 </Dialog.Title>
                                 <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                                     <div>
-                                        <h4 className="font-bold">URLs:</h4>
-                                        {data.urls?.length > 0 ? (
-                                            <ul className="list-disc ml-4">
-                                                {data.urls.map((url, index) => (
-                                                    <li key={index}>
-                                                        <a
-                                                            href={url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-500 underline"
-                                                        >
-                                                            {url}
-                                                        </a>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p>--</p>
-                                        )}
+                                        <h4 className="font-bold">Website URL & Product Name:</h4>
+                                        <div>
+                                            <p>
+                                                <strong>URL:</strong>{" "}
+                                                {data.urls ? (
+                                                    <a
+                                                        href={data.urls}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-500 underline"
+                                                    >
+                                                        {data.urls}
+                                                    </a>
+                                                ) : (
+                                                    "--"
+                                                )}
+                                            </p>
+                                            <div>
+                                                <strong>Product Name:</strong>
+                                                {data.name?.length > 0 ? (
+                                                    data.name.map((name, index) => (
+                                                        <p key={index} className="ml-2">
+                                                            {name}
+                                                        </p>
+                                                    ))
+                                                ) : (
+                                                    <p className="ml-2">--</p>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <h4 className="font-bold">Date:</h4>
-                                        <p>{moment(data.created_at).format("YYYY-MM-DD") || data.created_at}</p>
-
-
+                                        <p>{data.created_at ? moment(data.created_at).format("YYYY-MM-DD") : "--"}</p>
                                     </div>
                                     <div>
                                         <h4 className="font-bold">User Information:</h4>
@@ -79,14 +88,28 @@ const ViewHistoryDetails = ({ isOpen, toggle, title, data }) => {
                                         <p>Email: {data.user?.email || "--"}</p>
                                     </div>
                                     <div>
-                                        <h4 className="font-bold">Scrap Data:</h4>
-                                        {data.scrap_data?.length > 0 ? (
+                                        <h4 className="font-bold">Scraped Data:</h4>
+                                        {data.data?.length > 0 ? (
                                             <ul className="list-disc ml-4">
-                                                {data.scrap_data.map((item, index) => (
+                                                {data.data.map((item, index) => (
                                                     <li key={index}>
-                                                        <p>Name: {item.name || "--"}</p>
-                                                        <p>Price: {item.price || "--"}</p>
-                                                        <p>Description: {item.description || "--"}</p>
+                                                        {Object.entries(item).map(([key, value]) => (
+                                                            <p key={key}>
+                                                                <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
+                                                                {key === "url" ? (
+                                                                    <a
+                                                                        href={value}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-blue-500 underline"
+                                                                    >
+                                                                        {value}
+                                                                    </a>
+                                                                ) : (
+                                                                    value || "--"
+                                                                )}
+                                                            </p>
+                                                        ))}
                                                     </li>
                                                 ))}
                                             </ul>

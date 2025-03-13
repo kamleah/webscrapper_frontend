@@ -38,7 +38,7 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                     </div>
                 </div>
             </div>
-            <div className="flex items-center justify-between md:justify-center lg:justify-start bg-gray-100 fixed top-0 right-0 py-4 px-4 sm:rounded-bl-[2rem] z-50 md:px-3 w-full md:w-[14rem] lg:w-[24rem] xl:w-[22rem] " >
+            {/* <div className="flex items-center justify-between md:justify-center lg:justify-start bg-gray-100 fixed top-0 right-0 py-4 px-4 sm:rounded-bl-[2rem] z-50 md:px-3 w-full md:w-[14rem] lg:w-[24rem] xl:w-[22rem] " >
                 <button className='relative xl:hidden shadow-none ' onClick={() => setMobileSidebar(!mobileSidebar)}>
                     {mobileSidebar ? <XMarkIcon className='w-8 h-8 text-gray-500' /> : <HambergerMenu size={30} className='text-gray-500' />}
                 </button>
@@ -52,7 +52,6 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                     </button>
                     <div className="flex items-center" onClick={() => setCard(!card)}>
                         <div className="flex-shrink-0">
-                            {/* <img className="h-10 w-10 rounded-full object-cover" src={(user?.loggedUserDetails?.profile_image && user?.loggedUserDetails?.profile_image != "") ? user.loggedUserDetails.profile_image : userImg} alt="user" /> */}
                         </div>
                         <div className="ml-3 space-y-1 hidden lg:block w-full">
                             {(loggedUserDetails?.first_name && loggedUserDetails?.last_name) && <h4 className="text-base font-tb font-semibold whitespace-nowrap leading-none text-slate-800">
@@ -74,7 +73,6 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
             <div className={`${card ? "-top-96 opacity-0" : "top-20 opacity-100"} bg-white  transition-all ease-in-out duration-700 fixed shadow-sm border right-6 py-2 rounded-lg z-20 px-4 lg:px-6 lg:py-1`}>
                 <div className="flex items-center border-b border-slate-200 pb-3 lg:hidden">
                     <div className="flex-shrink-0">
-                        {/* <img className="h-10 w-10 rounded-full object-cover" src={user?.loggedUserDetails?.profile != "" ? user?.loggedUserDetails?.profile : userImg} alt="user" /> */}
                     </div>
                     <div className="ml-3 space-y-1">
                         <h4 className="text-sm md:text-base font-tb font-semibold leading-none text-slate-800">{user?.first_name + " " + user?.last_name}</h4>
@@ -95,7 +93,7 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                         <h4 className='font-tb text-sm lg:text-lg md:text-base font-semibold group-hover:text-red-500 text-slate-700 capitalize'>logout</h4>
                     </button>
                 </div>
-            </div>
+            </div> */}
             <LogoutModal setOpen={setOpen} open={open} />
         </div>
     )

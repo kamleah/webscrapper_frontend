@@ -1,6 +1,7 @@
 import {
     CpuSetting,
     LanguageSquare,
+    LogoutCurve,
     MenuBoard,
     MessageFavorite,
     Moneys,

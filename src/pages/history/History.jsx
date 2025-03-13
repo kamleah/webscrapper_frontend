@@ -26,13 +26,16 @@ const History = () => {
     const [open, setOpen] = useState(false);
     const [delId, setDelId] = useState(0);
     const [loading, setLoading] = useState(false);
+     const { accessToken } = useSelector((state) => state.auth);
 
     const fetchHistory = async (params) => {
         const payload = {
             ...params,
             user_id: loggedUserDetails?.id
         };
-        const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params: payload });
+        // const response = await axios.get(`${baseURL}scrap/user-scrap-filter/`, { params: payload });
+        const response = await axios.get(configurationEndPoints.firecrawl_scrap_filter, { params: payload });
+        console.log(response.data, "K><><MJIKM<>");
         return response.data;
     };
 
@@ -90,9 +93,11 @@ const History = () => {
 
     const downloadInExcelV2 = (row) => {
         try {
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
             setLoading(true);
-            axios
-                .post(configurationEndPoints.download_scrap, { scrapped_id: row.id })
+                 axios.get(`${configurationEndPoints.firecrawl_scrap_download}${row.id}/`,config)
                 .then((response) => {
                     if (response.data && response.data.data) {
                         exportToExcel(response.data.data);
@@ -110,7 +115,7 @@ const History = () => {
             setLoading(false);
         }
     };
-    
+
     const actionBodyTemplate = (row) => (
         <div className="flex items-center gap-2">
             <button
@@ -141,13 +146,25 @@ const History = () => {
             field: "urls",
             header: "Urls",
             body: (row) => (
-                <h6>
-                    {row?.urls && row.urls.length > 0
-                        ? row.urls[0].length > 50
-                            ? `${row.urls[0].substring(0, 50)}...`
-                            : row.urls[0]
-                        : "--"}
-                </h6>
+                <div>
+                    <h6>
+                        {row?.urls
+                            ? row.urls.length > 50
+                                ? `${row.urls.substring(0, 50)}...`
+                                : row.urls
+                            : "--"}
+                    </h6>
+                    {row?.name?.length > 0 ? (
+                        row.name.map((name, index) => (
+                            <h6 key={index}>
+                                {name.length > 50 ? `${name.substring(0, 50)}...` : name}
+                                
+                            </h6>
+                        ))
+                    ) : (
+                        <h6>--</h6>
+                    )}
+                </div>
             ),
             style: { width: "20%" }
         },
