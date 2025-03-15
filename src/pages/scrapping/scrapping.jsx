@@ -8,8 +8,8 @@ import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
-import FireCrawler from "../fireCrawler/Firecrawler";
 import { ToastContainer } from "react-toastify";
+import FireCrawler from "../fireCrawler/Firecrawler";
 
 const Scrapping = () => {
     const dispatch = useDispatch();
