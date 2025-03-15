@@ -24,7 +24,6 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
     const downloadAction = (contentId) => {
         setLoading(true);
         if (transformedContentResult.length > 0) {
-            console.log(transformedContentResult);
             exportToExcel(transformedContentResult)
             // downloadInExcel({ user_scrap_history: transformedContentResult });
             setLoading(false);
