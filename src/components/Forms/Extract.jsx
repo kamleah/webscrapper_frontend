@@ -44,7 +44,6 @@ const Extract = ({ handleResponseRecieved, setLoading, handleResetProcess }) => 
                 setLoader(false);
                 setLoading(false);
             }).catch((error) => {
-                console.log(error);
                 setLoader(false);
                 setLoading(false);
             });
@@ -52,7 +51,6 @@ const Extract = ({ handleResponseRecieved, setLoading, handleResetProcess }) => 
         } catch (error) {
             setLoader(false);
             setLoading(false);
-            console.log(error);
         };
     };
 

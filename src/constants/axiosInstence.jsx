@@ -18,7 +18,6 @@ api.interceptors.request.use(
         const parsedToked = token ? JSON.parse(atob(token.split('.')[1])) : null;
 
         if (!token) {
-            console.log("Token is not there");
             store.dispatch(logout());
         } else {
             config.headers['Authorization'] = `Bearer ${token}`;
@@ -26,7 +25,6 @@ api.interceptors.request.use(
                 if (token && parsedToked && parsedToked.exp) {
                     const currentTime = Math.floor(Date.now() / 1000);
                     if (parsedToked.exp < currentTime) {
-                        console.log('Token has expired. Redirecting to login...');
                         store.dispatch(logout());
                     } else {
                         return config;
