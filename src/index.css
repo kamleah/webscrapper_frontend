@@ -22,10 +22,10 @@
     --font-name-mon: 'Montserrat';
 }
 
-select {
+/* select {
     appearance: none;
     background: url("./assets/arrowdown.png") 96% / 1rem no-repeat;
-}
+} */
 
 /* ================== autofill color change =============== */
 input:-webkit-autofill,
@@ -301,11 +301,11 @@ body::-webkit-scrollbar-thumb {
 }
 
 /* =============signin background ================== */
-.bgbackground {
+/* .bgbackground {
     background: url('./assets/Background.png');
     background-repeat: no-repeat;
     background-size: cover;
-}
+} */
 
 .glass {
     background: rgba(255, 255, 255, 0.55);
