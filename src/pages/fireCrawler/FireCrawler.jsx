@@ -5,24 +5,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { configurationEndPoints } from '../../endPoints/ConfigurationsEndPoint';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { removeUsedURLS, setProcessToggle, setTabAccess, setUsedURLS } from '../../redux/historySlice/historySlice';
+import { removeUsedURLS, setProcessToggle, setProductName, setTabAccess, setUsedURLS } from '../../redux/historySlice/historySlice';
 import TextInputWithLabel from '../../components/Input/TextInputWithLabel';
 import LoadBox from '../../components/Loader/LoadBox';
 import { setToken } from '../../redux/authSlice/authSlice';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess }) => {
     const dispatch = useDispatch();
     const { accessToken, loggedUserDetails } = useSelector((state) => state.auth);
     const [loader, setLoader] = useState(false);
-    const { tabAccess, tabProcessStarted, userURLS } = useSelector((state) => state.history);
+    const { tabAccess, tabProcessStarted, userURLS, productName } = useSelector((state) => state.history);
 
-    const { control, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm({
+    const { control, handleSubmit, watch, setValue, reset, formState: { errors, isValid } } = useForm({
         defaultValues: {
             product_url: userURLS?.length ? userURLS[0]?.product_url : '',
-            product_names: [{ name: '' }],
+            // product_names: [{ name: '' }],
+            product_names: productName?.length ? productName : [{ name: '' }],
             extract_info: [
                 { info: 'title', required: true },
-                { info: 'description', required: true},
+                { info: 'description', required: true },
                 { info: 'price', required: true }
             ]
         }
@@ -37,7 +40,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
         control,
         name: "extract_info"
     });
-
+    
     const onSubmit = (payload) => {
         setLoader(true);
         setLoading(true);
@@ -45,14 +48,15 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             dispatch(setProcessToggle(true));
             dispatch(setTabAccess({ index: 1, access: true }));
             dispatch(setUsedURLS([{ product_url: payload.product_url }]));
+            dispatch(setProductName(payload.product_names));
 
             const crawlingPayload = {
                 website_url: payload.product_url,
                 product_names: payload.product_names.map(pn => pn.name),
-                tags:["url",...payload.extract_info.map(info => info.info)],
-                required_tags: ["url",...payload.extract_info
+                tags: ["url", ...payload.extract_info.map(info => info.info)],
+                required_tags: ["url", ...payload.extract_info
                     .filter(info => info.required)
-                    .map(info => info.info )]
+                    .map(info => info.info)]
             };
 
             console.log('Payload being sent:', crawlingPayload);
@@ -63,6 +67,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             axios.post(configurationEndPoints.firecrawl_scrap_v2, crawlingPayload, config)
                 .then((response) => {
                     console.log(response.data.data, "<><><><><><><><mnb");
+                    toast.success("Crawling started successfully!");
                     handleResponseRecieved(response.data.data);
                     setLoader(false);
                     setLoading(false);
@@ -75,6 +80,15 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
         } catch (error) {
             setLoader(false);
             setLoading(false);
+            const errorMessage = error.response?.data?.message || error.message || 'An error occurred while starting the crawl.';
+            toast.error(errorMessage, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             console.log(error);
         }
     };
@@ -84,6 +98,18 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             dispatch(removeUsedURLS());
         }
     }, []);
+    const handleReset = () => {
+        handleResetProcess();
+        reset({
+            product_url: '',
+            product_names: [{ name: '' }],
+            extract_info: [
+                { info: 'title', required: true },
+                { info: 'description', required: true },
+                { info: 'price', required: true },
+            ],
+        });
+    };
 
     return (
         <div className="mt-5 space-y-3">
@@ -213,13 +239,13 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
                         </div>
                     ))}
                     {/* {loggedUserDetails.process_type !== "single" && ( */}
-                        <button
-                            type="button"
-                            onClick={() => appendExtractInfo({ info: '', required: false })}
-                            className="flex items-center border px-4 py-2 rounded-xl ml-1 mt-2"
-                        >
-                            Add More <AddSquare size="20" className="ml-2" />
-                        </button>
+                    <button
+                        type="button"
+                        onClick={() => appendExtractInfo({ info: '', required: false })}
+                        className="flex items-center border px-4 py-2 rounded-xl ml-1 mt-2"
+                    >
+                        Add More <AddSquare size="20" className="ml-2" />
+                    </button>
                     {/* )} */}
                 </div>
 
@@ -243,7 +269,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
                 )}
                 {tabProcessStarted && (
                     <button
-                        onClick={() => handleResetProcess()}
+                        onClick={() => handleReset()}
                         className="w-full bg-red-500 hover:bg-red-700 font-tbPop text-white px-3 py-2.5 rounded-md mt-20"
                     >
                         Reset Process
