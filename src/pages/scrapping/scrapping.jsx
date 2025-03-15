@@ -8,7 +8,6 @@ import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
-import { ToastContainer } from "react-toastify";
 import FireCrawler from "../fireCrawler/FireCrawler";
 
 
@@ -107,14 +106,6 @@ const Scrapping = () => {
             </Tabs>
             {/* {isWaiting && <PageLoader />} */}
             {loading && <PageLoader />}
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                closeOnClick
-                pauseOnHover
-                draggable
-            />
         </div>
     );
 };

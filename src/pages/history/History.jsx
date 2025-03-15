@@ -17,6 +17,8 @@ import DeleteModal from '../../components/Modals/DeleteModal/DeleteModal';
 import { configurationEndPoints } from "../../endPoints/ConfigurationsEndPoint";
 import PageLoader from "../../components/Loader/PageLoader";
 import { exportToExcel } from "../../utils/constant";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const History = () => {
     const dispatch = useDispatch();
@@ -73,8 +75,16 @@ const History = () => {
                 page_size: pageSize,
             });
             dispatch(setHistory(updatedHistory.results));
+            toast.success("History deleted successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         } catch (error) {
             console.log("Error deleting history:", error);
+            toast.error(error.response?.data?.message || "Failed to delete history.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         }
     };
     const deleteData = () => {
@@ -102,16 +112,25 @@ const History = () => {
                     if (response.data && response.data.data) {
                         exportToExcel(response.data.data);
                         setLoading(false);
+                        toast.success("Data downloaded successfully!");
                     } else {
                         throw new Error('No data received from the API.');
                     }
                 })
                 .catch((error) => {
                     console.error('API Error:', error);
+                    toast.error(error.response?.data?.message || "Failed to download data.", {
+                        position: "top-right",
+                        autoClose: 3000,
+                    });
                     setLoading(false);
                 });
         } catch (error) {
             console.error('Error in downloadInExcelV2:', error);
+            toast.error("An unexpected error occurred during download.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
             setLoading(false);
         }
     };
@@ -204,6 +223,7 @@ const History = () => {
                 open={open}
             />
             {loading && <PageLoader />}
+          
         </div>
     );
 };
