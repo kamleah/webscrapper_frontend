@@ -66,7 +66,7 @@ const History = () => {
 
     const deleteHistory = async (historyId) => {
         try {
-            await axios.delete(`${configurationEndPoints.delete_history}${historyId}/`);
+            await axios.delete(`${configurationEndPoints.firecrawl_delete_delete_history}${historyId}/`);
             await fetchData({ page: pageNo, page_size: pageSize });
             const updatedHistory = await fetchHistory({
                 page: pageNo,
