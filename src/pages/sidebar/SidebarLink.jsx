@@ -44,7 +44,7 @@ const SidebarLink = ({ item, isActiveLink, index }) => {
                 />
             )}
         </div>
+        
     </>)
 }
-
 export default SidebarLink

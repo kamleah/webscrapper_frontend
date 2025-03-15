@@ -160,7 +160,6 @@ const User = () => {
         setOpen(!open);
         setDelId(id);
     };
-
     const deleteData = () => {
         handleDelete(delId);
         setOpen(false);

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, setLoading }) => {
     const dispatch = useDispatch();
+    const { accessToken } = useSelector((state) => state.auth);
     const [loader, setLoader] = useState(false);
     const [accordian, setAccordian] = useState(null);
     const toggleAccordion = (index) => {
@@ -17,8 +18,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     const { scrappedData, languages, selectedLanguages } = useSelector((state) => state.history);
     console.log("scrappedData-->", scrappedData);
     console.log("languages", languages);
-    
-    
+
     const {
         control,
         handleSubmit,
@@ -34,9 +34,13 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     const GetScrapDetails = (scrapId) => {
         try {
             setLoading(true);
-            axios.get(`${configurationEndPoints.user_scrap_by_id}${scrapId}/`)
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
+            axios.get(`${configurationEndPoints.firecrawl_scrap_by_id}${scrapId}/`, config)
+
                 .then((response) => {
-                    dispatch(setScrappedData(response.data.data.scraped_data.scrap_data));
+                    dispatch(setScrappedData(response.data.data.data));
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -48,10 +52,10 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         }
     };
-
     useEffect(() => {
         if (scraped_id) {
             GetScrapDetails(scraped_id);
+            console.log("scraped_id", scraped_id);
         }
     }, [scraped_id]);
 
@@ -60,9 +64,12 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         dispatch(setTabAccess({ index: 2, access: true }));
         setLoader(true);
         setLoading(true);
-        data.content_id = scraped_id;
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        };
+        data.scrap_id = scraped_id;
         data.languages = ["english", ...data.languages]
-        axios.post(configurationEndPoints.translate_content, data).then((response) => {
+        axios.post(configurationEndPoints.firecrawl_scrap_translate, data , config).then((response) => {
             handleContentTransformed(response.data.data);
             setLoader(false);
             setLoading(false);
@@ -71,7 +78,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
             setLoading(false);
         });
     };
-
 
     return (
         <div>
@@ -86,7 +92,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                             className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
                         >
                             <h3 className="text-blue-600 text-sm font-bold">
-                                {index + 1}. {data.name} - {data.price}
+                              {data.title}
                             </h3>
                             {accordian === index ? (
                                 <ChevronUp className="text-blue-600" />
@@ -100,21 +106,20 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                 : "max-h-0 overflow-hidden"
                                 }`}
                         >
-                            <h5 className="text-blue-600 mb-2 text-sm font-bold">Description</h5>
-                            <p className="text-sm text-gray-700">{data.description}</p>
-                            <a
-                                href={data.url}
+                            <p className="text-md text-gray-700">{data.price}</p>
+                            <p className="text-md text-gray-700">{data.description}</p>
+                            {/* <a
+                                href={data.urls}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-500 underline mt-2 block"
                             >
                                 View Product
-                            </a>
+                            </a> */}
                         </div>
                     </div>
                 ))}
             </div>
-
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">

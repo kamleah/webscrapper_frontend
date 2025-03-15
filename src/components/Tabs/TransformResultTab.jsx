@@ -14,6 +14,7 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
 
     const [selectedTags, setSelectedTags] = useState(['name', 'price']);
     const dispatch = useDispatch();
+     const { accessToken } = useSelector((state) => state.auth);
     const [accordionIndex, setAccordionIndex] = useState(null);
 
     const toggleAccordion = (index) => {
@@ -29,7 +30,10 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
             setLoading(false);
         } else {
             try {
-                axios.get(`${configurationEndPoints.translation_result_json}${contentId}/`).then((response) => {
+                const config = {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                };
+                axios.get(`${configurationEndPoints.firecrawl_scrap_download}${contentId}/`, config).then((response) => {
                     const payload = {
                         result: response.data.data,
                         id: contentId
@@ -48,6 +52,7 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
             };
         }
     };
+    
     return (
         <div className="my-4 space-y-4">
             <div className="flex justify-end">

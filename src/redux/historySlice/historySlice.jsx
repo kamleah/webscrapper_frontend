@@ -30,7 +30,8 @@ const initialState = {
     transformedContentResult: [],
     transformedContentId: undefined,
     scrapId: undefined,
-    rolesList: []
+    rolesList: [],
+    productName: [{name : ''}],
 };
 
 const historySlice = createSlice({
@@ -42,6 +43,9 @@ const historySlice = createSlice({
         },
         setUsedURLS: (state, action) => {
             state.userURLS = action.payload;
+        },
+        setProductName: (state, action) => {
+            state.productName = action.payload
         },
         removeUsedURLS: (state, action) => {
             state.userURLS = [{ product_name: '', product_url: '' }];
@@ -61,6 +65,7 @@ const historySlice = createSlice({
         setScrappedId: (state, action) => {
             state.scrapId = action.payload
         },
+       
         toggleLanguage: (state, action) => {
             const languageId = action.payload;
             if (state.selectedLanguages.includes(languageId)) {
@@ -83,5 +88,5 @@ const historySlice = createSlice({
     },
 });
 
-export const { setHistory, setUsedURLS, removeUsedURLS, setProcessToggle, setTabAccess, setScrappedData, setScrappedId, toggleLanguage, setTransformedContent, setTransformedContentResult, setUsersRoleList, resetProcess } = historySlice.actions;
+export const { setHistory, setUsedURLS, setProductName, removeUsedURLS, setProcessToggle, setTabAccess, setScrappedData, setScrappedId, toggleLanguage, setTransformedContent, setTransformedContentResult, setUsersRoleList, resetProcess } = historySlice.actions;
 export default historySlice.reducer;

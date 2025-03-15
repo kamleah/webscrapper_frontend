@@ -196,9 +196,9 @@ export const exportToExcel = async (data) => {
         });
 
         saveAs(blob, "Scraped_Data.xlsx");
-        setLoading(false);
+        // setLoading(false);
     } catch (error) {
         console.error("Error exporting to Excel:", error);
-        setLoading(false);
+        // setLoading(false);
     }
 };
