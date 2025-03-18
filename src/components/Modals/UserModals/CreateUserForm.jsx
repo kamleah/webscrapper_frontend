@@ -177,13 +177,12 @@ function CreateUserForm(props) {
                 } else {
                     setLoader(false)
                     toast.error(response?.Message);
-                    console.log('failed to create user')
                 }
             } catch (error) {
                 setLoader(false)
                 console.log('error', error);
             }
-        } else {                         // for edit
+        } else {                         
             setLoader(true)
             const response = await editUser(props?.data?.id, data)
             if (response) {
@@ -194,7 +193,7 @@ function CreateUserForm(props) {
                     toast.success(response?.message);
                 }, 1000);
             } else {
-                console.log('failed to update user')
+                // console.log('failed to update user')
             }
         }
     }

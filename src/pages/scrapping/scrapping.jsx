@@ -8,14 +8,12 @@ import TransformResultTab from "../../components/Tabs/TransformResultTab";
 import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
-import { ToastContainer } from "react-toastify";
 import FireCrawler from "../fireCrawler/FireCrawler";
 
 
 const Scrapping = () => {
     const dispatch = useDispatch();
     const { tabAccess, scrappedData, tabProcessStarted, userURLS, transformedContent, scrapId } = useSelector((state) => state.history);
-    console.log("scrapId>>", scrapId);
     const [selectedTab, setSelectedTab] = useState(0);
     // const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
@@ -26,29 +24,21 @@ const Scrapping = () => {
     const [isWaiting, setIsWaiting] = useState(false);
     const handleResponseRecieved = (response) => {
         try {
-            console.log("response", response);
-            // Make sure the data exists before dispatching
             if (response && response.scraped_data) {
                 dispatch(setScrappedData(response.scraped_data));
                 dispatch(setScrappedId(response.id));
             }
-            // Make sure the ID exists before dispatching
             if (response && response.id) {
                 try {
                     dispatch(setScrappedId(response.id));
-                    console.log("inside dispatch");
-
                 } catch (error) {
                     console.log(error);
                 }
             }
             setSelectedTab(1);
-            // setIsWaiting(true)
-            // setTimeout(() => {
-            //     setIsWaiting(false)
-            // }, 10000)
         } catch (error) {
-            console.log(error);
+
+            // console.log(error);
         };
     };
 
@@ -107,14 +97,6 @@ const Scrapping = () => {
             </Tabs>
             {/* {isWaiting && <PageLoader />} */}
             {loading && <PageLoader />}
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                closeOnClick
-                pauseOnHover
-                draggable
-            />
         </div>
     );
 };

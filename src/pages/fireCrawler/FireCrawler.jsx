@@ -67,7 +67,6 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             axios.post(configurationEndPoints.firecrawl_scrap_v2, crawlingPayload, config)
                 .then((response) => {
                     console.log(response.data.data, "<><><><><><><><mnb");
-                    toast.success("Crawling started successfully!");
                     handleResponseRecieved(response.data.data);
                     setLoader(false);
                     setLoading(false);
@@ -81,14 +80,7 @@ const FireCrawler = ({ handleResponseRecieved, setLoading, handleResetProcess })
             setLoader(false);
             setLoading(false);
             const errorMessage = error.response?.data?.message || error.message || 'An error occurred while starting the crawl.';
-            toast.error(errorMessage, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            toast.success(errorMessage);
             console.log(error);
         }
     };

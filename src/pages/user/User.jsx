@@ -19,6 +19,7 @@ import { authEndPoints } from "../../endPoints/AuthEndPoint";
 import DeleteModal from "../../components/Modals/DeleteModal/DeleteModal";
 const User = () => {
     const dispatch = useDispatch();
+     const { accessToken } = useSelector((state) => state.auth);
     const loggedUserDetails = useSelector((state) => state.auth.loggedUserDetails);
     const [isViewUserModalOpen, setViewUserModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
@@ -88,7 +89,10 @@ const User = () => {
     const handleUserCreated = async (newUser) => {
         newUser.user_created_by = loggedUserDetails?.id;
         try {
-            const response = await axios.post(configurationEndPoints.user_resgistration, newUser);
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
+            const response = await axios.post(configurationEndPoints.user_resgistration, newUser, config);
             toast.success("User created successfully!");
             await fetchData({ page: pageNo, page_size: pageSize });
             return true;
@@ -110,7 +114,10 @@ const User = () => {
     const handleUserEdit = async (formData, userId) => {
         formData.user_created_by = loggedUserDetails?.id;
         try {
-            const response = await axios.put(`${authEndPoints.update_user}${userId}/`, formData);
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
+            const response = await axios.put(`${authEndPoints.update_user}${userId}/`, formData, config);
             toast.success("User updated successfully!");
             setUsersList(prev => prev.map(user => 
                 user.id === userId ? { ...user, ...formData, user_role: { ...user.user_role, id: formData.user_role } } : user
@@ -133,11 +140,14 @@ const User = () => {
 
     const handleDelete = async (id) => {
         try {
+            const config = {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            };
             if (loggedUserDetails.id === id) {
                 alert("Action not allowed: You cannot delete your own account.");
                 return;
             }
-            await axios.delete(`${authEndPoints.update_user}${id}/`);
+            await axios.delete(`${authEndPoints.update_user}${id}/`, config);
             setUsersList(prev => prev.filter(user => user.id !== id));
             toast.success("User deleted successfully!");
         } catch (error) {

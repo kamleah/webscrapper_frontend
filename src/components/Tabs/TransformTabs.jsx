@@ -16,9 +16,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     };
 
     const { scrappedData, languages, selectedLanguages } = useSelector((state) => state.history);
-    console.log("scrappedData-->", scrappedData);
-    console.log("languages", languages);
-
     const {
         control,
         handleSubmit,
@@ -55,7 +52,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
     useEffect(() => {
         if (scraped_id) {
             GetScrapDetails(scraped_id);
-            console.log("scraped_id", scraped_id);
         }
     }, [scraped_id]);
 

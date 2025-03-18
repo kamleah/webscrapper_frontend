@@ -26,14 +26,12 @@ export default function CreateUserModal(props) {
 
     // ================= submit data  ===============================
     const onSubmit = async (formData) => {
-        console.log('formData', formData);
         try {
             if (props.button == 'edit') {
                 const formattedPayload = {
                     ...props?.data, ...formData
                     }
                     individualUserDetailsUpdate(props?.data?.id, formattedPayload).then((res) => {
-                    console.log(res);
                     if (res?.status === 'success') {
                         refreshList()
                         toggle();
@@ -49,7 +47,6 @@ export default function CreateUserModal(props) {
                     }
                     if (formattedPayload.role == 'SUPER_ADMIN') {
                         createSuperAdmin(formattedPayload).then((res) => {
-                            console.log(res);
                             if (res?.status === 'success') {
                                 refreshList()
                                 toggle();
@@ -59,7 +56,6 @@ export default function CreateUserModal(props) {
                         })
                     } else if (formattedPayload.role == 'ADMIN') {
                         createAdmin(formattedPayload).then((res) => {
-                            console.log(res);
                             if (res?.status === 'success') {
                                 refreshList()
                                 toggle();
