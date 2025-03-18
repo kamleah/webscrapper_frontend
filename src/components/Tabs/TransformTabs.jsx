@@ -75,9 +75,6 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         });
     };
 
-    console.log("scrappedData-->", scrappedData);
-
-
     return (
         <div>
             <div className="p-4">
