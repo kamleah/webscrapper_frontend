@@ -69,7 +69,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         };
         data.scrap_id = scraped_id;
         data.languages = ["english", ...data.languages]
-        axios.post(configurationEndPoints.firecrawl_scrap_translate, data , config).then((response) => {
+        axios.post(configurationEndPoints.firecrawl_scrap_translate, data, config).then((response) => {
             handleContentTransformed(response.data.data);
             setLoader(false);
             setLoading(false);
@@ -79,43 +79,54 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         });
     };
 
+    console.log("scrappedData-->", scrappedData);
+
+
     return (
         <div>
-            <div className='my-5'>
+            <div className="p-4">
                 {scrappedData?.map((data, index) => (
                     <div
                         key={index}
                         className="border border-gray-200 rounded-lg mb-4 shadow-sm overflow-hidden"
                     >
+                        {/* Accordion Header */}
                         <div
                             onClick={() => toggleAccordion(index)}
                             className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
                         >
-                            <h3 className="text-blue-600 text-sm font-bold">
-                              {data.title}
-                            </h3>
+                            <h3 className="text-blue-600 text-sm font-bold">{data.title}</h3>
                             {accordian === index ? (
                                 <ChevronUp className="text-blue-600" />
                             ) : (
                                 <ChevronDown className="text-blue-600" />
                             )}
                         </div>
+
+                        {/* Accordion Content */}
                         <div
                             className={`transition-all duration-300 ${accordian === index
-                                ? "max-h-[300px] p-4 bg-white overflow-y-auto"
-                                : "max-h-0 overflow-hidden"
+                                    ? "max-h-[500px] p-4 bg-white overflow-y-auto"
+                                    : "max-h-0 overflow-hidden"
                                 }`}
                         >
-                            <p className="text-md text-gray-700">{data.price}</p>
-                            <p className="text-md text-gray-700">{data.description}</p>
-                            {/* <a
-                                href={data.urls}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 underline mt-2 block"
-                            >
-                                View Product
-                            </a> */}
+                            {Object.entries(data).map(([key, value]) => (
+                                <div key={key} className="mb-2">
+                                    <strong className="text-gray-800">{key.toUpperCase()}:</strong>
+                                    {key === "url" ? (
+                                        <a
+                                            href={value}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 underline ml-1"
+                                        >
+                                            View Product
+                                        </a>
+                                    ) : (
+                                        <p className="text-gray-700">{value}</p>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 ))}
