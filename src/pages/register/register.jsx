@@ -39,7 +39,7 @@ const Register = () => {
             <div className="w-[20rem] md:w-[22rem] lg:w-[27rem] xl:w-[27rem] md:p-3 py-5 space-y-3">
               <div className="">
                 <h2 className=" lg:mx-3 text-xl sm:text-3xl font-tbPop font-bold tracking-tight text-black">
-                  Hello <span className='text-blue-400'>Welcome!</span>
+                  Hello <span className='text-primary'>Welcome!</span>
                 </h2>
                 <h5 className="lg:mx-3 text-sm sm:text-base font-tbPop font-medium text-gray-400">
                   Please SignUp to Dashboard!
@@ -115,7 +115,7 @@ const Register = () => {
                 <div className='pt-3'>
                   {loader ? <LoadBox title='Submitting' /> : <button
                     type="submit"
-                    className="flex w-full justify-center font-tbPop rounded-md bg-blue-500 px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+                    className="flex w-full justify-center font-tbPop rounded-md bg-primary px-3 py-2.5 text-base font-semibold leading-6 text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
                   >
                     Sign up
                   </button>}

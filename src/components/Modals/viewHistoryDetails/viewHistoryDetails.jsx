@@ -35,7 +35,7 @@ const ViewHistoryDetails = ({ isOpen, toggle, title, data }) => {
                             <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title
                                     as="div"
-                                    className="flex items-center justify-between bg-blue-500 text-white p-4"
+                                    className="flex items-center justify-between bg-primary text-white p-4"
                                 >
                                     <h3 className="text-lg font-medium">{title}</h3>
                                     <CloseSquare
@@ -56,7 +56,7 @@ const ViewHistoryDetails = ({ isOpen, toggle, title, data }) => {
                                                         href={data.urls}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-blue-500 underline"
+                                                        className="text-primary underline"
                                                     >
                                                         {data.urls}
                                                     </a>
@@ -101,7 +101,7 @@ const ViewHistoryDetails = ({ isOpen, toggle, title, data }) => {
                                                                         href={value}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
-                                                                        className="text-blue-500 underline"
+                                                                        className="text-primary underline"
                                                                     >
                                                                         {value}
                                                                     </a>

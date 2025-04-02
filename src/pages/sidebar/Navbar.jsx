@@ -29,7 +29,7 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
         <div className=" flex justify-between items-center py-5  px-5 sm:px-6 pt-24 sm:pt-4 pb-0 sm:pb-5">
             <div className="min-w-0 flex-1">
                 <h2 className="font-tb font-bold text-2xl  md:text-2xl lg:text-2xl whitespace-nowrap ">
-                    {greetingTime(new Date())},<span className="capitalize text-blue-400"> {user?.first_name}</span>
+                    {greetingTime(new Date())},<span className="capitalize text-primary"> {user?.first_name}</span>
                 </h2>
                 <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6 ">
                     <div className="mt-2 flex items-center text-base font-tbPop text-gray-500 font-semibold">
@@ -46,7 +46,7 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                     <button className='px-7  relative'>
                         <span className="absolute flex top-0 right-6 h-3.5 w-3.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
                         </span>
                         <NotificationBing size="30" />
                     </button>
@@ -81,12 +81,12 @@ const Navbar = ({ mobileSidebar, setMobileSidebar }) => {
                 </div>
                 <div className="p-2 pb-0">
                     <NavLink to={"/profile"} onClick={() => setCard(!card)} className="flex items-center space-x-2 pb-2 group transition-all duration-700">
-                        <User size={22} className='text-gray-700 group-hover:text-blue-400' />
-                        <h4 className='font-tbPop text-sm lg:text-lg md:text-base font-semibold group-hover:text-blue-400 text-slate-700 capitalize'>Profile</h4>
+                        <User size={22} className='text-gray-700 group-hover:text-primary' />
+                        <h4 className='font-tbPop text-sm lg:text-lg md:text-base font-semibold group-hover:text-primary text-slate-700 capitalize'>Profile</h4>
                     </NavLink>
                     <NavLink className="flex items-center space-x-2 pb-2 group transition-all duration-700">
-                        <Setting2 size={22} onClick={() => setCard(!card)} className='text-gray-700 group-hover:text-blue-400' />
-                        <h4 className='font-tbPop text-sm lg:text-lg md:text-base font-semibold group-hover:text-blue-400 text-slate-700 capitalize'>Setting</h4>
+                        <Setting2 size={22} onClick={() => setCard(!card)} className='text-gray-700 group-hover:text-primary' />
+                        <h4 className='font-tbPop text-sm lg:text-lg md:text-base font-semibold group-hover:text-primary text-slate-700 capitalize'>Setting</h4>
                     </NavLink>
                     <button onClick={logOut} className="flex items-center space-x-2 pb-2 group">
                         <LogoutCurve size={20} className='text-gray-700 group-hover:text-red-500' />

@@ -71,10 +71,10 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
                     >
                         <div
                             onClick={() => toggleAccordion(index)}
-                            className="flex items-center justify-between px-4 py-3 hover:bg-blue-100 cursor-pointer"
+                            className="flex items-center justify-between px-4 py-3 hover:bg-orange-100 cursor-pointer"
                         >
                             <div>
-                                <h5 className="text-blue-600 text-sm font-bold capitalize">
+                                <h5 className="text-primary-600 text-sm font-bold capitalize">
                                     {content?.language}
                                 </h5>
                                 <h6 className="text-gray-600 text-sm font-semibold capitalize">
@@ -82,9 +82,9 @@ const TransformResultTab = ({ transformedContent, handleResetProcess, scraped_id
                                 </h6>
                             </div>
                             {accordionIndex === index ? (
-                                <ChevronUp className="text-blue-600" />
+                                <ChevronUp className="text-primary" />
                             ) : (
-                                <ChevronDown className="text-blue-600" />
+                                <ChevronDown className="text-primary" />
                             )}
                         </div>
                         <div

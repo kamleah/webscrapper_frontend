@@ -57,7 +57,7 @@
 //                             className="w-40 h-40 object-cover rounded-md"
 //                         />
 //                         <CloseSquare size="25" className="absolute top-2 right-2 text-red-500 bg-white rounded-full p-1 cursor-pointer" onClick={handleThumbnailRemove} />
-//                         <GalleryEdit size="25" className="absolute top-10 right-2 text-blue-500 bg-white rounded-full p-1 cursor-pointer"
+//                         <GalleryEdit size="25" className="absolute top-10 right-2 text-primary bg-white rounded-full p-1 cursor-pointer"
 //                             onClick={() => document.getElementById("thumbnail").click()} />
 //                     </div>
 //                 ) : (
@@ -138,7 +138,7 @@ const ImageInput = ({ label, message = 'Please add message here. Thanks!', onCha
                             className={`w-[${imgWidth}] h-[${imgHeight}] object-cover rounded-md`}
                         />
                         <CloseSquare size="25" className="absolute top-2 right-2 text-red-500 bg-white rounded-full p-1 cursor-pointer" onClick={handleThumbnailRemove} />
-                        <GalleryEdit size="25" className="absolute top-10 right-2 text-blue-500 bg-white rounded-full p-1 cursor-pointer"
+                        <GalleryEdit size="25" className="absolute top-10 right-2 text-primary bg-white rounded-full p-1 cursor-pointer"
                             onClick={() => document.getElementById(`thumbnail-${uniqueId}`).click()} />
                     </div>
                 ) : (

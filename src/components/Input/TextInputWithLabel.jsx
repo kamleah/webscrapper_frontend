@@ -9,7 +9,7 @@ const TextInputWithLabel = ({ label, placeholder, required, value, onChange }) =
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className="w-full text-sm border rounded-md px-4 py-3 focus:outline-blue-400"
+                className="w-full text-sm border rounded-md px-4 py-3 focus:outline-orange-400"
             />
         </div>
     );

@@ -440,7 +440,7 @@ const Step4 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("image", { required: props.button == 'edit' ? false : true })} />
-                {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data.image.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
                 {errors.image && <Error title='Main Image is required*' />}
@@ -454,7 +454,7 @@ const Step4 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("outside_img", { required: props.button == 'edit' ? false : true })} />
-                {props?.button == 'edit' && props?.data.outside_img != '' && props?.data.outside_img != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data.outside_img != '' && props?.data.outside_img != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data.outside_img.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
                 {errors.outside_img && <Error title=' Outside Image is required*' />}
@@ -468,7 +468,7 @@ const Step4 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("other_img")} />
-                {props?.button == 'edit' && props?.data.other_img != '' && props?.data.other_img != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data.other_img != '' && props?.data.other_img != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data.other_img.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
             </div>
@@ -483,7 +483,7 @@ const Step4 = (props) => {
                     {...register("loading_img")} />
                 {props?.button == 'edit' && props?.data.loading_img != '' && props?.data.loading_img != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.loading_img.split('storage')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>
@@ -500,7 +500,7 @@ const Step4 = (props) => {
                     {...register("staging_img")} />
                 {props?.button == 'edit' && props?.data.staging_img != '' && props?.data.staging_img != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.staging_img.split('storage')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>
@@ -517,7 +517,7 @@ const Step4 = (props) => {
                     {...register("storage_img")} />
                 {props?.button == 'edit' && props?.data.storage_img != '' && props?.data.storage_img != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.storage_img.split('storage')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>
@@ -539,7 +539,7 @@ const Step4 = (props) => {
                     })} />
                 {props?.button == 'edit' && props?.data.video_url != '' && props?.data.video_url != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.video_url.split('demovideo')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>
@@ -599,7 +599,7 @@ const Step5 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("fassai_doc", { required: props.button == 'edit' ? false : true })} />
-                {props?.button == 'edit' && props?.data?.fassai_doc != '' && props?.data?.fassai_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data?.fassai_doc != '' && props?.data?.fassai_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data?.fassai_doc.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
                 {errors.fassai_doc && <Error title='Fassai license Docx*' />}
@@ -613,7 +613,7 @@ const Step5 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("gst_doc", { required: props.button == 'edit' ? false : true })} />
-                {props?.button == 'edit' && props?.data?.gst_doc != '' && props?.data?.gst_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data?.gst_doc != '' && props?.data?.gst_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data?.gst_doc.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
                 {errors.gst_doc && <Error title='Gst Image docx is required*' />}
@@ -627,7 +627,7 @@ const Step5 = (props) => {
                     accept='image/jpeg,image/jpg,image/png,application/pdf'
                     placeholder='Upload Images...'
                     {...register("other_lic_doc")} />
-                {props?.button == 'edit' && props?.data?.other_lic_doc != '' && props?.data?.other_lic_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                {props?.button == 'edit' && props?.data?.other_lic_doc != '' && props?.data?.other_lic_doc != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                     {props?.data?.other_lic_doc.split('storage')[1].split('/')[1].split('_')[2]}
                 </label>}
                 {errors.other_lic_doc && <Error title='Other licenses Docx is required*' />}
@@ -643,7 +643,7 @@ const Step5 = (props) => {
                     {...register("electricity_url")} />
                 {props?.button == 'edit' && props?.data.electricity_url != '' && props?.data.electricity_url != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.electricity_url.split('storage')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>
@@ -660,7 +660,7 @@ const Step5 = (props) => {
                     {...register("noc_url")} />
                 {props?.button == 'edit' && props?.data.noc_url != '' && props?.data.noc_url != undefined &&
                     <>
-                        <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                        <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                             {props?.data.noc_url.split('storage')[1].split('/')[1].split('_')[2]}
                         </label>
                     </>

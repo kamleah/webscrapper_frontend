@@ -21,8 +21,8 @@ const SidebarLink = ({ item, isActiveLink, index }) => {
                 {!isActiveLink && <div className="absolute top-0 left-0 transition-all duration-300 origin-left w-1.5 h-full rounded-r-md "></div>
                 }
                 <div className="flex items-center  space-x-2">
-                    <span className="text-slate-800  group-hover:text-blue-400 duration-500 transition-all origin-left icon-wrapper">{icon}</span>
-                    {!isActiveLink && <h4 className="text-base font-tb font-bold origin-left text-slate-800 group-hover:text-blue-400 duration-500 whitespace-nowrap transition-all  text-title">{title}</h4>}
+                    <span className="text-slate-800  group-hover:text-primary duration-500 transition-all origin-left icon-wrapper">{icon}</span>
+                    {!isActiveLink && <h4 className="text-base font-tb font-bold origin-left text-slate-800 group-hover:text-ornage-400 duration-500 whitespace-nowrap transition-all  text-title">{title}</h4>}
                 </div>
 
                 {!isActiveLink && <div className="">
@@ -32,8 +32,8 @@ const SidebarLink = ({ item, isActiveLink, index }) => {
                 {!isActiveLink && <div className="absolute top-0 left-0 transition-all duration-300 origin-left w-1.5 h-full rounded-r-md left-border opacity-0"></div>
                 }
                 <div className="flex items-center  space-x-2">
-                    <span className="text-slate-800  group-hover:text-blue-400 duration-500 transition-all origin-left icon-wrapper">{icon}</span>
-                    {!isActiveLink && <h4 className="text-base font-tb font-bold origin-left text-slate-800 group-hover:text-blue-400 duration-500 whitespace-nowrap transition-all  text-title">{title}</h4>}
+                    <span className="text-slate-800  group-hover:text-orange-400 duration-500 transition-all origin-left icon-wrapper">{icon}</span>
+                    {!isActiveLink && <h4 className="text-base font-tb font-bold origin-left text-slate-800 group-hover:text-primary duration-500 whitespace-nowrap transition-all  text-title">{title}</h4>}
                 </div>
             </NavLink >}
         <div className={showDropdown ? "opacity-100 duration-500 transition-all" : "opacity-0 duration-700 transition-all"}>
