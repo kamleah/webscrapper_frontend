@@ -124,7 +124,7 @@ const Extract = ({ handleResponseRecieved, setLoading, handleResetProcess }) => 
                             <button
                                 type="submit"
                                 disabled={!isValid}
-                                className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${isValid ? 'bg-blue-500 hover:bg-sky-500' : 'bg-gray-300 cursor-not-allowed'}`}
+                                className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm ${isValid ? 'bg-primary hover:bg-orange-500' : 'bg-gray-300 cursor-not-allowed'}`}
                             >
                                 Start Crawling
                             </button>

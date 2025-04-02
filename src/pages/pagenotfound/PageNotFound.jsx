@@ -19,7 +19,7 @@ function PageNotFound() {
         </div>
         <button
           onClick={handleBackToHome}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-orange-700 transition duration-300"
         >
           Back to Home
         </button>

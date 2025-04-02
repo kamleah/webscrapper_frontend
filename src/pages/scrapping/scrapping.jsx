@@ -9,6 +9,9 @@ import PageLoader from "../../components/Loader/PageLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProcess, setScrappedData, setScrappedId, setTransformedContent } from "../../redux/historySlice/historySlice";
 import FireCrawler from "../fireCrawler/FireCrawler";
+import FireCrawlMap from "../fireCrawler/FireCrawlMap";
+import TransformTabsV2 from "../../components/Tabs/TransformTabsV2";
+import TransformTabsV3 from "../../components/Tabs/TransformTabsV3";
 
 
 const Scrapping = () => {
@@ -18,7 +21,7 @@ const Scrapping = () => {
     // const [scrappedData, setScrappedData] = useState();
     const [loading, setLoading] = useState(false);
     const tabStyle = 'p-3 cursor-pointer font-tbPop font-medium';
-    const activeTabStyle = 'text-blue-500 border-b-2 border-blue-400 outline-0';
+    const activeTabStyle = 'text-primary border-b-2 border-primary outline-0';
     const inActiveTabStyle = 'text-gray-500';
     const tabs = ["Extract", "Transform", "Result"];
     const [isWaiting, setIsWaiting] = useState(false);
@@ -83,12 +86,13 @@ const Scrapping = () => {
                 </TabList>
 
                 <TabPanel>
-                    {/* <Extract handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} /> */}
-                    <FireCrawler handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} />
+                    {/* <FireCrawler handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} /> */}
+                    <FireCrawlMap handleResponseRecieved={handleResponseRecieved} setLoading={setLoading} handleResetProcess={handleResetProcess} />
                 </TabPanel>
 
                 <TabPanel>
-                    <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrapId} handleContentTransformed={handleContentTransformed} setLoading={setLoading} />
+                    {/* <TransformTabs scraped_data={scrappedData?.scraped_data} scraped_id={scrapId} handleContentTransformed={handleContentTransformed} setLoading={setLoading} /> */}
+                    <TransformTabsV3 scraped_data={scrappedData?.scraped_data} scraped_id={scrapId} handleContentTransformed={handleContentTransformed} setLoading={setLoading} />
                 </TabPanel>
 
                 <TabPanel>

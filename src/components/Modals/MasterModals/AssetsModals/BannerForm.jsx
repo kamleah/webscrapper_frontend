@@ -156,7 +156,7 @@ export default function BannerForm(props) {
                                                         accept='image/jpeg,image/jpg,image/png'
                                                         placeholder='Upload Images...'
                                                         {...register("image", { required: props.button == 'edit' ? false : true })} />
-                                                    {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800'>
+                                                    {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary'>
                                                         {props?.data?.image?.split('/').pop()}
                                                     </label>}
                                                     {errors.image && <Error title='Main Image is required*' />}

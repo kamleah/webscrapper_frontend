@@ -86,7 +86,7 @@ export default function CreateUserModal({ isOpen, onUserCreated,onUserEdit, clos
                             leaveTo="opacity-0 scale-95"
                         >
                             <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
-                                <Dialog.Title as="div" className="flex items-center justify-between bg-blue-500 text-white p-4">
+                                <Dialog.Title as="div" className="flex items-center justify-between bg-primary text-white p-4">
                                     <h3 className="text-lg font-medium">{formType == "edit" ? "Edit User" : "Create User"}</h3>
                                     <CloseSquare size={24} color="white" className="cursor-pointer" onClick={toggle} />
                                 </Dialog.Title>

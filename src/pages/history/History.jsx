@@ -140,9 +140,9 @@ const History = () => {
             <button
                 onClick={() => openViewHistoryModal(row)}
                 id={row.id}
-                className="bg-blue-100 px-1.5 py-2 rounded-sm"
+                className="bg-orange-100 px-1.5 py-2 rounded-sm"
             >
-                <Eye size="20" className="text-blue-500" />
+                <Eye size="20" className="text-primary" />
             </button>
             <button
                 onClick={() => downloadInExcelV2(row)}

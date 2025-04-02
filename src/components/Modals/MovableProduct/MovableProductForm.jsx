@@ -450,7 +450,7 @@ export default function MovableProductForm(props) {
                                                             accept='application/pdf'
                                                             placeholder='Upload PDF...'
                                                             {...register("pdf_url", { required: props.button == 'edit' ? false : true })} />
-                                                        {props?.button == 'edit' && props?.data.pdf_url != '' && props?.data.pdf_url != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.pdf_url != '' && props?.data.pdf_url != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.pdf_url?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                         {errors.pdf_url && <Error title='Brochure is required*' />}
@@ -464,7 +464,7 @@ export default function MovableProductForm(props) {
                                                             accept='image/jpeg,image/jpg,image/png'
                                                             placeholder='Upload Images...'
                                                             {...register("image", { required: props.button == 'edit' ? false : true })} />
-                                                        {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.image != '' && props?.data.image != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.image?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                         {errors.image && <Error title='Main Image is required*' />}
@@ -478,7 +478,7 @@ export default function MovableProductForm(props) {
                                                             accept='image/jpeg,image/jpg,image/png'
                                                             placeholder='Upload Images...'
                                                             {...register("image2")} />
-                                                        {props?.button == 'edit' && props?.data.image2 != '' && props?.data.image2 != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.image2 != '' && props?.data.image2 != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.image2?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                     </div>
@@ -491,7 +491,7 @@ export default function MovableProductForm(props) {
                                                             accept='image/jpeg,image/jpg,image/png'
                                                             placeholder='Upload Images...'
                                                             {...register("image3")} />
-                                                        {props?.button == 'edit' && props?.data.image3 != '' && props?.data.image3 != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.image3 != '' && props?.data.image3 != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.image3?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                     </div>
@@ -504,7 +504,7 @@ export default function MovableProductForm(props) {
                                                             accept='image/jpeg,image/jpg,image/png'
                                                             placeholder='Upload Images...'
                                                             {...register("image4")} />
-                                                        {props?.button == 'edit' && props?.data.image4 != '' && props?.data.image4 != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.image4 != '' && props?.data.image4 != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.image4?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                     </div>
@@ -517,7 +517,7 @@ export default function MovableProductForm(props) {
                                                             accept='image/jpeg,image/jpg,image/png'
                                                             placeholder='Upload Images...'
                                                             {...register("image5")} />
-                                                        {props?.button == 'edit' && props?.data.image5 != '' && props?.data.image5 != undefined && <label className='block mb-1 text-md font-tb font-medium text-blue-800 capitalize'>
+                                                        {props?.button == 'edit' && props?.data.image5 != '' && props?.data.image5 != undefined && <label className='block mb-1 text-md font-tb font-medium text-primary capitalize'>
                                                             {props?.data?.image5?.split('movableproduct')[1].split('/')[1]}
                                                         </label>}
                                                     </div>

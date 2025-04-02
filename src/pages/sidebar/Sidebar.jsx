@@ -6,6 +6,8 @@ import Navbar from './Navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { DashboardRouter } from '../../routes/DashboardRouter';
 import LogoutModal from '../../components/Modals/NavbarModals/LogoutModal';
+import leftimage from '../../assets/images/logo-craft.png'
+import cropped_logo from '../../assets/images/cropped_logo.png'
 
 const Sidebar = ({ children }) => {
   const [isActiveLink, setIsActiveLink] = useState(false);
@@ -40,10 +42,10 @@ const Sidebar = ({ children }) => {
               <div className="absolute top-14 -right-4 z-50">
                 <button
                   onClick={() => setIsActiveLink(!isActiveLink)}
-                  className="bg-[#f3f3f3] hover:bg-blue-500 group p-2 rounded-full shadow-md transition-all duration-300"
+                  className="bg-[#f3f3f3] hover:bg-orange-500 group p-2 rounded-full shadow-md transition-all duration-300"
                 >
                   <DirectLeft
-                    className={`text-blue-400 group-hover:text-white transition-all duration-500 ${isActiveLink && "rotate-180"}`}
+                    className={`text-primary group-hover:text-white transition-all duration-500 ${isActiveLink && "rotate-180"}`}
                     size={22}
                   />
                 </button>
@@ -51,21 +53,12 @@ const Sidebar = ({ children }) => {
             )}
             <div className="flex flex-col h-full">
               <div className="flex justify-center items-center py-4 px-5">
-                <NavLink className="flex space-x-2 items-center" to="/">
-                  <Trade size={isActiveLink ? "36" : "30"} className="text-blue-400" variant="Bulk" />
-                  <div>
-                    <h2
-                      className={
-                        isActiveLink
-                          ? "hidden"
-                          : "font-tb font-extrabold text-2xl text-black transition-all duration-700 delay-200"
-                      }
-                    >
-                      Scrapper
-                    </h2>
-
-                  </div>
-                </NavLink>
+                {!isActiveLink ? <NavLink className="flex space-x-2 items-center transition-all duration-700" to="/">
+                  <img src={leftimage} className='object-cover h-6 transition-all duration-700' loading='lazy' />
+                </NavLink> :
+                  <NavLink className="flex space-x-2 items-center transition-all duration-700" to="/">
+                    <img src={cropped_logo} className='object-cover h-6 transition-all duration-700' loading='lazy' />
+                  </NavLink>}
               </div>
               <div className={isActiveLink ? "hidden" : " px-5 ml-10"}>
                 {loggedUserDetails?.first_name && loggedUserDetails?.last_name ? (
@@ -117,9 +110,9 @@ const Sidebar = ({ children }) => {
               </div>
             </div>
           </div>
-        </aside>
+        </aside >
         {/* ====================== Sidebar End ===================== */}
-        <div
+        < div
           className={
             isActiveLink
               ? "navbar-section-active transition-all duration-700"
@@ -127,16 +120,16 @@ const Sidebar = ({ children }) => {
           }
         >
           {/* ====================== Navbar Start ===================== */}
-          <Navbar setMobileSidebar={setMobileSidebar} mobileSidebar={mobileSidebar} />
+          < Navbar setMobileSidebar={setMobileSidebar} mobileSidebar={mobileSidebar} />
           {/* ====================== Navbar End ===================== */}
-          <main className="pb-5">
+          < main className="pb-5" >
             {/* ====================== Routes Start ===================== */}
             {children}
             {/* ====================== Routes End ===================== */}
-          </main>
-        </div>
+          </main >
+        </div >
         <LogoutModal setOpen={setOpen} open={open} />
-      </div>
+      </div >
     </>
   );
 };

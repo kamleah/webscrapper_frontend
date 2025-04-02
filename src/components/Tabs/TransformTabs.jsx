@@ -75,6 +75,9 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
         });
     };
 
+    console.log(scrappedData);
+    
+
     return (
         <div>
             <div className="p-4">
@@ -86,13 +89,13 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                         {/* Accordion Header */}
                         <div
                             onClick={() => toggleAccordion(index)}
-                            className="flex items-center justify-between p-4 hover:bg-blue-50 cursor-pointer"
+                            className="flex items-center justify-between p-4 hover:bg-orange-50 cursor-pointer"
                         >
-                            <h3 className="text-blue-600 text-sm font-bold">{data.title}</h3>
+                            <h3 className="text-sm font-bold text-primary">{data.title}</h3>
                             {accordian === index ? (
-                                <ChevronUp className="text-blue-600" />
+                                <ChevronUp className="text-primary" />
                             ) : (
-                                <ChevronDown className="text-blue-600" />
+                                <ChevronDown className="text-primary" />
                             )}
                         </div>
 
@@ -111,7 +114,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                             href={value}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-500 underline ml-1"
+                                            className="text-primary underline ml-1"
                                         >
                                             View Product
                                         </a>
@@ -149,7 +152,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                                                 field.onChange(newValue);
                                             }}
                                             // onChange={() => dispatch(toggleLanguage(language.id))}
-                                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                            className="h-4 w-4 text-primary focus:ring-orange-500 border-gray-300 rounded"
                                         />
                                     )}
                                 />
@@ -166,7 +169,7 @@ const TransformTabs = ({ scraped_data, scraped_id, handleContentTransformed, set
                         type="submit"
                         disabled={!isValid || loader}
                         className={`flex w-full justify-center font-tbPop rounded-md px-3 py-2.5 text-base font-semibold text-white shadow-sm 
-                        ${isValid ? 'bg-blue-500 hover:bg-sky-500' : 'bg-gray-300 cursor-not-allowed'}`}
+                        ${isValid ? 'bg-primary hover:bg-orange-500' : 'bg-gray-300 cursor-not-allowed'}`}
                     >
                         {loader ? 'Transforming Content...' : 'Transform Content'}
                     </button>

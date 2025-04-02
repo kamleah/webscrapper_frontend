@@ -42,7 +42,7 @@ const PDFUpload = ({ label, message = 'Please add message here. Thanks!', onChan
                         /> */}
                         <div className="absolute right-10 flex flex-col gap-2">
                             <CloseSquare size="25" className="relative top-2 right-2 text-red-500 bg-gray-200 rounded-full p-1 cursor-pointer" onClick={handleDocRemove} />
-                            <label htmlFor="selectpdf"><GalleryEdit size="25" className="relative top-2 right-2 text-blue-500 bg-gray-200 rounded-full p-1 cursor-pointer" /></label>
+                            <label htmlFor="selectpdf"><GalleryEdit size="25" className="relative top-2 right-2 text-primary bg-gray-200 rounded-full p-1 cursor-pointer" /></label>
                         </div>
                     </React.Fragment>
                 ) : (

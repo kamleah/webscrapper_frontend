@@ -1,10 +1,10 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async';
 
-const DocumentHead = ({ title = "Scrapper" }) => {
+const DocumentHead = ({ title = "CRAFT PDP MAKER" }) => {
     return (
         <Helmet>
-            <title>{title} | Scrapper</title>
+            <title>{title} | CRAFT PDP MAKER</title>
         </Helmet>
     )
 }

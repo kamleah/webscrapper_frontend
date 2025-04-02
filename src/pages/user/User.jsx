@@ -179,9 +179,9 @@ const User = () => {
         <div className="flex items-center gap-2">
             <button
                 onClick={() => openViewUserModal(row)}
-                className="bg-blue-100 px-1.5 py-2 rounded-sm"
+                className="bg-orange-100 px-1.5 py-2 rounded-sm"
             >
-                <Eye size="20" className="text-blue-500" />
+                <Eye size="20" className="text-primary" />
             </button>
             <EditCreateButton
                 title="Edit User"
