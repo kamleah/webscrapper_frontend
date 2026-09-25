@@ -14,7 +14,7 @@ const AppRoute = () => {
                 isLogged ?
                     <AuthenticatedRoute />
                     :
-                    <Login/>
+                    <AuthenticatedRoute/>
             }
             <ToastContainer position="top-right"
                 autoClose={1500}
